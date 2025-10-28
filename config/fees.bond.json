@@ -1,0 +1,31 @@
+{
+  "description": "Bond fees configuration - LSSA/LPC sliding scale (ex VAT) + 15% VAT, Deeds office bands, Fixed disbursements",
+  "attorneyFeeBands": [
+    { "upTo": 100000, "fee": 5500 },
+    { "upTo": 250000, "fee": 7920 },
+    { "upTo": 500000, "fee": 12100 },
+    { "upTo": 1000000, "fee": 19800 },
+    { "upTo": 2000000, "fee": 33000 },
+    { "upTo": 4000000, "fee": 56120 },
+    { "upTo": 5000000, "fee": 66370 },
+    { "upTo": 10000000, "fee": 99550 },
+    { "fee": 132730 }
+  ],
+  "deedsOfficeByBond": [
+    { "upTo": 100000, "fee": 385 },
+    { "upTo": 250000, "fee": 490 },
+    { "upTo": 500000, "fee": 595 },
+    { "upTo": 1000000, "fee": 805 },
+    { "upTo": 2000000, "fee": 1200 },
+    { "upTo": 5000000, "fee": 2281 },
+    { "upTo": 10000000, "fee": 2850 },
+    { "fee": 3650 }
+  ],
+  "disbursements": {
+    "postagesAndPetties": 1610,
+    "electronicGenerationFee": 575,
+    "electronicInstructionFee": 115,
+    "deedsOfficeSearches": 345
+  },
+  "vatRate": 0.15
+}

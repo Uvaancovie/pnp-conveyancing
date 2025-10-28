@@ -1,0 +1,44 @@
+{
+  "description": "Transfer fees configuration - 2025 LPFF recommended tariffs (ex VAT) + 15% VAT, Deeds office bands, Fixed disbursements",
+  "attorneyFeeBands": [
+    { "upTo": 100000, "fee": 6050 },
+    { "upTo": 200000, "fee": 8800 },
+    { "upTo": 300000, "fee": 12100 },
+    { "upTo": 400000, "fee": 14300 },
+    { "upTo": 500000, "fee": 16500 },
+    { "upTo": 600000, "fee": 18700 },
+    { "upTo": 700000, "fee": 20900 },
+    { "upTo": 800000, "fee": 23100 },
+    { "upTo": 900000, "fee": 25300 },
+    { "upTo": 1000000, "fee": 27500 },
+    { "upTo": 2000000, "fee": 35200 },
+    { "upTo": 3000000, "fee": 42900 },
+    { "upTo": 4000000, "fee": 50600 },
+    { "upTo": 5000000, "fee": 58300 },
+    { "upTo": 10000000, "fee": 66000, "rate": 0.006 },
+    { "fee": 121000, "rate": 0.0055 }
+  ],
+  "deedsOfficeByPrice": [
+    { "upTo": 150000, "fee": 46 },
+    { "upTo": 300000, "fee": 640 },
+    { "upTo": 500000, "fee": 780 },
+    { "upTo": 700000, "fee": 1100 },
+    { "upTo": 1000000, "fee": 1250 },
+    { "upTo": 2000000, "fee": 1646 },
+    { "upTo": 4000000, "fee": 2270 },
+    { "upTo": 6000000, "fee": 2780 },
+    { "upTo": 8000000, "fee": 3300 },
+    { "upTo": 10000000, "fee": 3850 },
+    { "upTo": 15000000, "fee": 4400 },
+    { "upTo": 20000000, "fee": 5500 },
+    { "fee": 6600 }
+  ],
+  "disbursements": {
+    "postagesAndPetties": 1380,
+    "electronicGenerationFee": 575,
+    "fica": 977.50,
+    "deedsOfficeSearches": 345,
+    "ratesClearanceFees": 1725
+  },
+  "vatRate": 0.15
+}

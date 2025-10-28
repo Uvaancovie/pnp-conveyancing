@@ -1,0 +1,32 @@
+{
+  "description": "SARS Transfer Duty rates with versioned brackets",
+  "currentEffectiveFrom": "2025-04-01",
+  "schedules": [
+    {
+      "effectiveFrom": "2025-04-01",
+      "effectiveUntil": null,
+      "description": "SARS Transfer Duty rates effective 1 April 2025 (Budget 2025)",
+      "brackets": [
+        { "upTo": 1210000, "base": 0, "rate": 0, "threshold": 0 },
+        { "upTo": 1663800, "base": 0, "rate": 0.03, "threshold": 1210000 },
+        { "upTo": 2329300, "base": 13614, "rate": 0.06, "threshold": 1663800 },
+        { "upTo": 2994800, "base": 53544, "rate": 0.08, "threshold": 2329300 },
+        { "upTo": 13310000, "base": 106784, "rate": 0.11, "threshold": 2994800 },
+        { "base": 1241456, "rate": 0.13, "threshold": 13310000 }
+      ]
+    },
+    {
+      "effectiveFrom": "2024-03-01",
+      "effectiveUntil": "2025-03-31",
+      "description": "SARS Transfer Duty rates 1 March 2024 - 31 March 2025",
+      "brackets": [
+        { "upTo": 1100000, "base": 0, "rate": 0, "threshold": 0 },
+        { "upTo": 1512500, "base": 0, "rate": 0.03, "threshold": 1100000 },
+        { "upTo": 2117500, "base": 12375, "rate": 0.06, "threshold": 1512500 },
+        { "upTo": 2722500, "base": 48675, "rate": 0.08, "threshold": 2117500 },
+        { "upTo": 12100000, "base": 97075, "rate": 0.11, "threshold": 2722500 },
+        { "base": 1128600, "rate": 0.13, "threshold": 12100000 }
+      ]
+    }
+  ]
+}
