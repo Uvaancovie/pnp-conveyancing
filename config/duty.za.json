@@ -1,0 +1,10 @@
+{
+  "effectiveFrom": "2025-04-01",
+  "brackets": [
+    { "upTo": 1210000, "base": 0, "rate": 0, "threshold": 0 },
+    { "upTo": 1935000, "base": 0, "rate": 0.03, "threshold": 1210000 },
+    { "upTo": 2675000, "base": 21750, "rate": 0.06, "threshold": 1935000 },
+    { "upTo": 11600000, "base": 66500, "rate": 0.08, "threshold": 2675000 },
+    { "rate": 0.11, "threshold": 11600000 }
+  ]
+}

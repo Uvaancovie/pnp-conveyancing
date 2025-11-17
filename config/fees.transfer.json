@@ -1,0 +1,20 @@
+{
+  "formula": "tiered",
+  "tiers": [
+    { "max": 1000000, "rate": 0.010, "min": 4000 },
+    { "max": 3000000, "rate": 0.0085, "min": 9000 },
+    { "rate": 0.0075 }
+  ],
+  "fixedBands": [
+    { "max": 2000000, "feeExVat": 35618.26 },
+    { "max": 3500000, "feeExVat": 52020 }
+  ],
+  "deedsOfficeByPrice": [
+    { "max": 1000000, "fee": 1165 },
+    { "max": 2000000, "fee": 1646 },
+    { "max": 4000000, "fee": 2281 },
+    { "fee": 2800 }
+  ],
+  "disbursements": { "postage": 1380, "electronicGen": 575, "fica": 977.5, "deedsSearch": 345, "ratesClear": 1725 },
+  "vatRate": 0.15
+}

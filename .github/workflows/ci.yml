@@ -1,0 +1,54 @@
+name: CI
+
+# Provide YAML schema for the editor, this helps the YAML language server validate GitHub Actions syntax
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Use npm legacy peer deps (compatibility)
+        run: npm config set legacy-peer-deps true
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Run Jest tests (if present)
+        # If your project has tests, add them to package.json and remove this `if` clause.
+        if: ${{ always() }}
+        run: |
+          if npm run | grep -q " test"; then npm test --silent; else echo "No tests configured"; fi
+
+      - name: Check server subproject (optional)
+        if: ${{ always() }}
+        run: |
+          if [ -d server ]; then cd server && npm ci && echo "Server dependencies installed"; else echo "No server"; fi
+
+      - name: Build for Web (optional)
+        if: ${{ env.EXPO_TOKEN != '' }}
+        run: |
+          echo "Building web assets (optional)";
+          npx expo prebuild --non-interactive || true

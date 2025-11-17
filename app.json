@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "P&P Conveyancing Companion",
+    "slug": "pnp-conveyancing",
+    "scheme": "pnpconvey",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#FFFFFF" },
+    "ios": { "supportsTablet": false },
+    "android": { "package": "za.way2fly.pnpconvey", "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#FFFFFF" } },
+    "plugins": ["expo-router"],
+    "extra": { "eas": { "projectId": "REPLACE_WITH_EAS_PROJECT_ID" } }
+
+
+    
+  }
+}

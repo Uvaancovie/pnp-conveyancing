@@ -1,0 +1,18 @@
+{
+  "formula": "tiered",
+  "tiers": [
+    { "max": 2000000, "rate": 0.009 },
+    { "rate": 0.008 }
+  ],
+  "fixedBands": [
+    { "max": 3000000, "feeExVat": 45870 },
+    { "max": 4000000, "feeExVat": 56121.74 }
+  ],
+  "deedsOfficeByBond": [
+    { "max": 2000000, "fee": 1646 },
+    { "max": 4000000, "fee": 2281 },
+    { "fee": 2800 }
+  ],
+  "disbursements": { "postage": 1610, "electronicGen": 575, "electronicInstr": 115, "deedsSearch": 345 },
+  "vatRate": 0.15
+}
