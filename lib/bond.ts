@@ -1,4 +1,5 @@
 import bondConfig from '../config/fees.bond.json';
+import { fixedBandFee, tieredFee } from './fees';
 
 export interface BondCosts {
   bondAttorneyFee: number;
@@ -11,30 +12,24 @@ export interface BondCosts {
 }
 
 export function calcBondCosts(bondAmount: number): BondCosts {
-  // Calculate attorney fee using LSSA/LPC sliding scale + VAT
-  let attorneyFeeExVat = 0;
-  for (const band of (bondConfig as any).attorneyFeeBands) {
-    if (!band.upTo || bondAmount <= band.upTo) {
-      attorneyFeeExVat = band.fee;
-      break;
-    }
-  }
-  const bondAttorneyFee = attorneyFeeExVat * (1 + bondConfig.vatRate);
+  // Attorney fee: use fixed bands first, then tiered fallback
+  const exVat = fixedBandFee(bondAmount, (bondConfig as any).fixedBands) ?? tieredFee(bondAmount, (bondConfig as any).tiers);
+  const bondAttorneyFee = Math.round(exVat * (1 + bondConfig.vatRate));
   
   // Calculate deeds office fees based on bond amount
   let deedsOfficeFees = 0;
   for (const band of bondConfig.deedsOfficeByBond) {
-    if (!band.upTo || bondAmount <= band.upTo) {
+    if (!band.max || bondAmount <= band.max) {
       deedsOfficeFees = band.fee;
       break;
     }
   }
   
   // Get disbursements from config
-  const postagesAndPetties = bondConfig.disbursements.postagesAndPetties;
-  const electronicGenerationFee = bondConfig.disbursements.electronicGenerationFee;
-  const electronicInstructionFee = bondConfig.disbursements.electronicInstructionFee;
-  const deedsOfficeSearches = bondConfig.disbursements.deedsOfficeSearches;
+  const postagesAndPetties = bondConfig.disbursements.postage ?? 0;
+  const electronicGenerationFee = bondConfig.disbursements.electronicGen ?? 0;
+  const electronicInstructionFee = bondConfig.disbursements.electronicInstr ?? 0;
+  const deedsOfficeSearches = bondConfig.disbursements.deedsSearch ?? 0;
   
   const total = bondAttorneyFee + postagesAndPetties + deedsOfficeFees + 
                 electronicGenerationFee + electronicInstructionFee + deedsOfficeSearches;
