@@ -1,16 +1,28 @@
 // utils/firebase.ts
-import 'react-native-get-random-values'; // polyfill for RN
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { initializeApp } from 'firebase/app';
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
-  initializeAuth, signInAnonymously, getAuth,
-  createUserWithEmailAndPassword, updateProfile, signOut,
-  browserLocalPersistence,
+    browserLocalPersistence,
+    createUserWithEmailAndPassword,
+    getAuth,
+    initializeAuth, signInAnonymously,
+    signOut,
+    updateProfile,
+    type Auth,
 } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
 import {
-  getFirestore, initializeFirestore, persistentLocalCache,
-  collection, addDoc, serverTimestamp, doc, setDoc, query, orderBy, getDocs
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    getFirestore,
+    orderBy,
+    query,
+    serverTimestamp,
+    setDoc
 } from 'firebase/firestore';
+import 'react-native-get-random-values'; // polyfill for RN
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -21,30 +33,37 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-// App
-const app = initializeApp(firebaseConfig);
+// App (guard initialization so apps are not initialized twice in the same runtime)
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 import { Platform } from 'react-native';
-// Auth (platform-specific persistence)
-(async () => {
-  try {
-    if (Platform.OS === 'web') {
-      initializeAuth(app, { persistence: browserLocalPersistence });
-    } else {
-      // dynamic import to avoid bundling native-only module on web
-      const rnAuth = await import('firebase/auth/react-native');
-      initializeAuth(app, { persistence: rnAuth.getReactNativePersistence(AsyncStorage) });
-    }
-  } catch (err) {
-    // fallback to default behavior
-    try { initializeAuth(app); } catch {}
-  }
-})();
-const auth = getAuth(app);
 
-// Firestore (good offline defaults)
-initializeFirestore(app, { localCache: persistentLocalCache() });
-const db = getFirestore(app);
+// Auth (platform-specific persistence) - guard against re-initialization
+let auth: Auth;
+try {
+  // Try to get existing auth instance first
+  auth = getAuth(app);
+} catch (err) {
+  // If not initialized, initialize with platform-specific persistence
+  (async () => {
+    try {
+      if (Platform.OS === 'web') {
+        initializeAuth(app, { persistence: browserLocalPersistence });
+      } else {
+        // dynamic import to avoid bundling native-only module on web
+        const rnAuth = await import('firebase/auth/react-native');
+        initializeAuth(app, { persistence: rnAuth.getReactNativePersistence(AsyncStorage) });
+      }
+    } catch (err) {
+      // fallback to default behavior
+      try { initializeAuth(app); } catch {}
+    }
+  })();
+  auth = getAuth(app);
+}
+
+// Firestore - simply use getFirestore, it handles initialization automatically
+const db: Firestore = getFirestore(app);
 
 // Ensure we’re signed in anonymously before writing
 async function ensureAnon() {

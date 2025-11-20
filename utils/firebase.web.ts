@@ -1,15 +1,25 @@
 // utils/firebase.web.ts
-import 'react-native-get-random-values';
-import { initializeApp } from 'firebase/app';
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
-  initializeAuth, signInAnonymously, getAuth,
-  createUserWithEmailAndPassword, updateProfile, signOut,
-  browserLocalPersistence,
+    browserLocalPersistence,
+    createUserWithEmailAndPassword,
+    getAuth,
+    initializeAuth, signInAnonymously,
+    signOut,
+    updateProfile,
 } from 'firebase/auth';
 import {
-  getFirestore, initializeFirestore, persistentLocalCache,
-  collection, addDoc, serverTimestamp, doc, setDoc, query, orderBy, getDocs
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    getFirestore,
+    orderBy,
+    query,
+    serverTimestamp,
+    setDoc
 } from 'firebase/firestore';
+import 'react-native-get-random-values';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -20,11 +30,21 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-initializeAuth(app, { persistence: browserLocalPersistence });
-const auth = getAuth(app);
+// Guard against re-initialization
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-initializeFirestore(app, { localCache: persistentLocalCache() });
+// Auth - guard against re-initialization
+let auth;
+try {
+  auth = getAuth(app);
+} catch {
+  try {
+    initializeAuth(app, { persistence: browserLocalPersistence });
+  } catch {}
+  auth = getAuth(app);
+}
+
+// Firestore - getFirestore handles initialization automatically
 const db = getFirestore(app);
 
 async function ensureAnon() {

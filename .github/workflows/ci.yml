@@ -45,7 +45,18 @@ jobs:
       - name: Check server subproject (optional)
         if: ${{ always() }}
         run: |
-          if [ -d server ]; then cd server && npm ci && echo "Server dependencies installed"; else echo "No server"; fi
+          if [ -d server ]; then
+            cd server
+            # prefer a clean install when lockfile exists; fallback to `npm install` when it doesn't
+            if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+              npm ci
+            else
+              npm install --legacy-peer-deps
+            fi
+            echo "Server dependencies installed"
+          else
+            echo "No server"
+          fi
 
       - name: Build for Web (optional)
         if: ${{ env.EXPO_TOKEN != '' }}

@@ -1,25 +1,26 @@
 import { useState } from 'react';
-import { ScrollView, Alert } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
+import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
 import { ResultRow } from '../components/ResultRow';
-import { Button, BtnText } from '../components/Button';
-import { useConfig } from '../lib/useConfig';
+import { defaultConfig } from '../lib/config';
 import { fixedBandFee, tieredFee } from '../lib/fees';
 import { formatZAR } from '../lib/money';
+import { useConfig } from '../lib/useConfig';
 import { saveCalculation } from '../utils/firebase';
 
 export default function Bond(){
   const { data } = useConfig();
-  const cfg = data!;
+  const cfg = data ?? defaultConfig;
   const [amount, setAmount] = useState('4000000');
   const a = Number((amount||'').replace(/\s|,/g, '')) || 0;
 
   const exVat = fixedBandFee(a, cfg.feesBond.fixedBands) ?? tieredFee(a, cfg.feesBond.tiers);
   const atty = Math.round(exVat * (1 + cfg.feesBond.vatRate));
   const deeds = cfg.feesBond.deedsOfficeByBond.find(b=>!b.max || a <= b.max)?.fee ?? 0;
-  const d = cfg.feesBond.disbursements;
-  const total = atty + d.postage + d.deedsSearch + d.electronicGen + d.electronicInstr + deeds;
+  const d = cfg.feesBond.disbursements ?? {} as any;
+  const total = atty + (d.postage ?? 0) + (d.deedsSearch ?? 0) + (d.electronicGen ?? 0) + (d.electronicInstr ?? 0) + deeds;
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -28,11 +29,11 @@ export default function Bond(){
       </Card>
       <Card title="Results">
         <ResultRow label="Bond Attorney Fee" value={formatZAR(atty)} />
-        <ResultRow label="Postages & Petties" value={formatZAR(d.postage)} />
+        <ResultRow label="Postages & Petties" value={formatZAR(d.postage ?? 0)} />
         <ResultRow label="Deeds Office Fees" value={formatZAR(deeds)} />
-        <ResultRow label="Electronic Generation Fee" value={formatZAR(d.electronicGen)} />
-        <ResultRow label="Electronic Instruction Fee" value={formatZAR(d.electronicInstr)} />
-        <ResultRow label="Deeds Office Searches" value={formatZAR(d.deedsSearch)} />
+        <ResultRow label="Electronic Generation Fee" value={formatZAR(d.electronicGen ?? 0)} />
+        <ResultRow label="Electronic Instruction Fee" value={formatZAR(d.electronicInstr ?? 0)} />
+        <ResultRow label="Deeds Office Searches" value={formatZAR(d.deedsSearch ?? 0)} />
         <ResultRow big label="Total Bond Costs (incl. VAT)" value={formatZAR(total)} />
       </Card>
       <Button onPress={async ()=>{
