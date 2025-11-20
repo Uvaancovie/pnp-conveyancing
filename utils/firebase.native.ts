@@ -35,7 +35,7 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // Auth - guard against re-initialization
-let auth;
+let auth: ReturnType<typeof getAuth>;
 try {
   auth = getAuth(app);
 } catch {
