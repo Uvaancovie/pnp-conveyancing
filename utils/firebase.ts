@@ -73,13 +73,16 @@ console.log('Firebase auth exported:', !!auth, typeof auth);
 export const db: Firestore = getFirestore(app);
 console.log('Firebase db exported:', !!db, typeof db);
 
-// Ensure we’re signed in anonymously before writing
+// Ensure we're signed in anonymously before writing
 async function ensureAnon() {
   const currentAuth = getAuth(app);
   if (!currentAuth.currentUser) {
-    await signInAnonymously(currentAuth).catch((err) => {
-      console.warn("Anon auth failed", err);
-    });
+    try {
+      await signInAnonymously(currentAuth);
+    } catch (err) {
+      console.warn("Anonymous auth failed - Firebase Auth may not be enabled", err);
+      // Don't throw - allow app to continue without auth
+    }
   }
 }
 
@@ -87,9 +90,14 @@ async function ensureAnon() {
 export async function createLead(payload: {
   fullName: string; phone: string; email: string; suburb?: string; price?: number;
 }) {
-  await ensureAnon();
-  const ref = collection(db, 'leads');
-  await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
+  try {
+    await ensureAnon();
+    const ref = collection(db, 'leads');
+    await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
+  } catch (err) {
+    console.warn("Could not save lead to Firestore (auth disabled?)", err);
+    // Don't throw - allow WhatsApp handoff to continue
+  }
 }
 
 // Register user with email & password and create basic profile
@@ -117,9 +125,16 @@ export async function saveCalculation(payload: { type: string; inputs: any; resu
   const currentAuth = getAuth(app);
   
   if (!currentAuth.currentUser) {
-    // If not logged in, try anonymous sign in
-    await ensureAnon();
-    if (!currentAuth.currentUser) throw new Error('not-signed-in');
+    // Try anonymous sign in
+    try {
+      await ensureAnon();
+    } catch (err) {
+      throw new Error('Firebase Authentication is not enabled. Please enable Email/Password and Anonymous auth in Firebase Console.');
+    }
+    
+    if (!currentAuth.currentUser) {
+      throw new Error('not-signed-in');
+    }
   }
   
   const targetUser = currentAuth.currentUser!;
@@ -131,6 +146,9 @@ export async function saveCalculation(payload: { type: string; inputs: any; resu
     await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
   } catch (e: any) {
     console.error("Save calculation failed", e);
+    if (e.code === 'permission-denied') {
+      throw new Error('Firebase Authentication is disabled or Firestore rules are blocking access. Enable auth in Firebase Console.');
+    }
     throw e;
   }
 }
