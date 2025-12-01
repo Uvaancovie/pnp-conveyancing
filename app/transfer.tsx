@@ -1,5 +1,7 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, ScrollView } from 'react-native';
+import { Alert, Platform, ScrollView } from 'react-native';
+import { Text, XStack, YStack } from 'tamagui';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
@@ -12,8 +14,9 @@ import { useConfig } from '../lib/useConfig';
 import { saveCalculation } from '../utils/firebase';
 
 export default function Transfer(){
+  const router = useRouter();
   const { data } = useConfig();
-  const cfg = data ?? defaultConfig; // use default inline config when data is not loaded
+  const cfg = data ?? defaultConfig;
   const [price, setPrice] = useState('2000000');
   const p = Number((price||'').replace(/\s|,/g, '')) || 0;
 
@@ -25,7 +28,7 @@ export default function Transfer(){
   const total = atty + (d.postage ?? 0) + (d.electronicGen ?? 0) + (d.fica ?? 0) + (d.deedsSearch ?? 0) + (d.ratesClear ?? 0) + deeds + duty;
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
+    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
       <Card title="Transfer Cost Calculator" subtitle="Quotation values subject to change.">
         <Field label="Purchase Price (R)" keyboardType="numeric" value={price} onChangeText={setPrice} placeholder="2 000 000" />
       </Card>
@@ -40,12 +43,46 @@ export default function Transfer(){
         <ResultRow label="Transfer Duty" value={formatZAR(duty)} />
         <ResultRow big label="Total Transfer Costs (incl. VAT)" value={formatZAR(total)} />
       </Card>
-      <Button onPress={async ()=>{
-        try {
-          await saveCalculation({ type: 'transfer', inputs: { price: p }, result: { total, duty, atty } });
-          Alert.alert('Saved', 'Calculation saved to your profile.');
-        } catch (err) { Alert.alert('Please sign in', 'Save requires a registered account.'); }
-      }}><BtnText>Save to Profile</BtnText></Button>
+      <YStack gap="$3" marginTop="$4">
+        <Button onPress={async ()=>{
+          try {
+            await saveCalculation({ type: 'transfer', inputs: { price: p }, result: { total, duty, atty } });
+            if (Platform.OS === 'web') {
+              if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {
+                router.push('/profile');
+              }
+            } else {
+              Alert.alert('Saved', 'Calculation saved to your profile.', [
+                { text: 'Stay Here', style: 'cancel' },
+                { text: 'View Profile', onPress: () => router.push('/profile') }
+              ]);
+            }
+          } catch (err: any) { 
+            console.error(err);
+            if (err.message === 'not-signed-in') {
+              Alert.alert('Please sign in', 'Save requires a registered account.');
+            } else if (err.code === 'permission-denied') {
+              Alert.alert('Permission Error', 'Your security rules are blocking this action. Please check Firebase Console.');
+            } else {
+              Alert.alert('Error', 'Failed to save calculation: ' + err.message);
+            }
+          }
+        }}><BtnText>Save to Profile</BtnText></Button>
+
+        <Button variant="outline" onPress={() => router.push('/profile')}>
+            <BtnText color="$brand">View My Profile</BtnText>
+        </Button>
+        
+        <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Related Calculators</Text>
+        <XStack gap="$3" justifyContent="center">
+          <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/bond')}>
+            <BtnText>Bond Costs</BtnText>
+          </Button>
+          <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/repayment')}>
+            <BtnText>Repayments</BtnText>
+          </Button>
+        </XStack>
+      </YStack>
     </ScrollView>
   );
 }

@@ -1,19 +1,35 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { Platform } from 'react-native';
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile as firebaseUpdateProfile,
-  User as FirebaseUser
-} from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { db } from '../lib/firebase';
-import { User, UserRole, AuthContextType } from '../types/auth';
+import * as SecureStore from 'expo-secure-store';
+import { getApp, getApps, initializeApp } from 'firebase/app';
+import {
+  createUserWithEmailAndPassword,
+  updateProfile as firebaseUpdateProfile,
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  type Auth
+} from 'firebase/auth';
+import { doc, getDoc, getFirestore, setDoc, type Firestore } from 'firebase/firestore';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
+import { AuthContextType, User, UserRole } from '../types/auth';
+
+// Initialize Firebase directly in this file to avoid module loading issues
+const firebaseConfig = {
+  apiKey: "AIzaSyDgyr9c1-1qlmMftGjdWNUyWv2eqvUNP4w",
+  authDomain: "pnp-conveyancer.firebaseapp.com",
+  projectId: "pnp-conveyancer",
+  storageBucket: "pnp-conveyancer.firebasestorage.app",
+  messagingSenderId: "223625627019",
+  appId: "1:223625627019:web:a01d3da9084abe2e5c5b8e",
+};
+
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const firebaseAuth: Auth = getAuth(app);
+const db: Firestore = getFirestore(app);
+
+console.log('auth-context.tsx - Direct Firebase init - auth:', !!firebaseAuth, 'db:', !!db);
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -53,10 +69,19 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const auth = getAuth();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    console.log('AuthProvider useEffect - firebaseAuth:', !!firebaseAuth, 'db:', !!db);
+    
+    // Guard against undefined auth
+    if (!firebaseAuth) {
+      console.error('CRITICAL: Firebase auth not initialized!');
+      setLoading(false);
+      return;
+    }
+
+    console.log('Setting up onAuthStateChanged listener...');
+    const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
           // Fetch additional user data from Firestore
@@ -87,19 +112,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               });
             } else {
               // User document doesn't exist (shouldn't happen, but handle it)
-              console.warn('User document not found in Firestore');
-              setUser(null);
+              // Create a basic user profile from Auth data so the app doesn't break
+              const userProfile: User = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email!,
+                displayName: firebaseUser.displayName || 'User',
+                role: 'customer' as UserRole,
+                createdAt: new Date(),
+                lastLogin: new Date(),
+              };
+              setUser(userProfile);
             }
           } catch (firestoreError) {
             console.error('Firestore error:', firestoreError);
-            // Still allow user to be authenticated even if Firestore is offline
+            // Still allow user to be authenticated even if Firestore is offline or permissions fail
             // Use data from Firebase Auth only
             const userProfile: User = {
               uid: firebaseUser.uid,
               email: firebaseUser.email!,
               displayName: firebaseUser.displayName || 'User',
               role: 'customer' as UserRole, // Default to customer
-              phoneNumber: '',
               createdAt: new Date(),
               lastLogin: new Date(),
             };
@@ -120,11 +152,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return unsubscribe;
-  }, []);
+  }, [firebaseAuth]);
 
   const login = async (email: string, password: string) => {
+    if (!firebaseAuth) throw new Error('Auth not initialized');
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(firebaseAuth, email, password);
     } catch (error: any) {
       console.error('Login error:', error);
       // Provide user-friendly error messages
@@ -149,8 +182,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     role: UserRole,
     phoneNumber?: string
   ) => {
+    if (!firebaseAuth || !db) throw new Error('Auth or DB not initialized');
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
       const firebaseUser = userCredential.user;
 
       // Update Firebase Auth profile
@@ -198,7 +232,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await signOut(auth);
+      await signOut(firebaseAuth);
       await secureStorage.deleteItem('userToken');
     } catch (error: any) {
       console.error('Logout error:', error);
@@ -226,7 +260,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       // Update Firebase Auth profile
-      await firebaseUpdateProfile(auth.currentUser!, { displayName });
+      if (firebaseAuth.currentUser) {
+        await firebaseUpdateProfile(firebaseAuth.currentUser, { displayName });
+      }
 
       // Update Firestore document
       const updateData: any = { displayName };

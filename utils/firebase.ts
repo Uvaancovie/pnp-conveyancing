@@ -1,14 +1,16 @@
 // utils/firebase.ts
-import AsyncStorage from '@react-native-async-storage/async-storage';
+console.log('firebase.ts module loading...');
+
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
     browserLocalPersistence,
     createUserWithEmailAndPassword,
     getAuth,
-    initializeAuth, signInAnonymously,
+    initializeAuth,
+    signInAnonymously,
     signOut,
     updateProfile,
-    type Auth,
+    type Auth
 } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import {
@@ -22,55 +24,61 @@ import {
     serverTimestamp,
     setDoc
 } from 'firebase/firestore';
-import 'react-native-get-random-values'; // polyfill for RN
+import { Platform } from 'react-native';
+
+// Only import the polyfill on native platforms
+if (Platform.OS !== 'web') {
+  require('react-native-get-random-values');
+}
 
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "AIzaSyDgyr9c1-1qlmMftGjdWNUyWv2eqvUNP4w",
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || "pnp-conveyancer.firebaseapp.com",
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || "pnp-conveyancer",
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || "pnp-conveyancer.firebasestorage.app",
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "223625627019",
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "1:223625627019:web:a01d3da9084abe2e5c5b8e",
 };
 
 // App (guard initialization so apps are not initialized twice in the same runtime)
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-import { Platform } from 'react-native';
+console.log('Firebase app initialized:', !!app);
 
-// Auth (platform-specific persistence) - guard against re-initialization
-let auth: Auth;
+// Auth - Try getAuth first, fall back to initializeAuth if needed
+let authInstance: Auth;
+
 try {
-  // Try to get existing auth instance first
-  auth = getAuth(app);
-} catch (err) {
-  // If not initialized, initialize with platform-specific persistence
-  (async () => {
-    try {
-      if (Platform.OS === 'web') {
-        initializeAuth(app, { persistence: browserLocalPersistence });
-      } else {
-        // dynamic import to avoid bundling native-only module on web
-        const rnAuth = await import('firebase/auth/react-native');
-        initializeAuth(app, { persistence: rnAuth.getReactNativePersistence(AsyncStorage) });
-      }
-    } catch (err) {
-      // fallback to default behavior
-      try { initializeAuth(app); } catch {}
-    }
-  })();
-  auth = getAuth(app);
+  console.log('Attempting getAuth...');
+  authInstance = getAuth(app);
+  console.log('getAuth succeeded');
+} catch (getAuthError: any) {
+  console.log('getAuth failed, attempting initializeAuth...', getAuthError.code);
+  try {
+    authInstance = initializeAuth(app, { 
+      persistence: browserLocalPersistence 
+    });
+    console.log('initializeAuth succeeded');
+  } catch (initError: any) {
+    console.error('Both getAuth and initializeAuth failed:', initError);
+    // Last resort - try getAuth one more time
+    authInstance = getAuth(app);
+  }
 }
 
+export const auth: Auth = authInstance;
+console.log('Firebase auth exported:', !!auth, typeof auth);
+
 // Firestore - simply use getFirestore, it handles initialization automatically
-const db: Firestore = getFirestore(app);
+export const db: Firestore = getFirestore(app);
+console.log('Firebase db exported:', !!db, typeof db);
 
 // Ensure we’re signed in anonymously before writing
 async function ensureAnon() {
-  if (!auth.currentUser) {
-    await signInAnonymously(auth).catch(() => {
-      // still allow WhatsApp handoff even if auth fails
-      // (we just skip Firestore insert)
+  const currentAuth = getAuth(app);
+  if (!currentAuth.currentUser) {
+    await signInAnonymously(currentAuth).catch((err) => {
+      console.warn("Anon auth failed", err);
     });
   }
 }
@@ -86,8 +94,9 @@ export async function createLead(payload: {
 
 // Register user with email & password and create basic profile
 export async function registerWithEmail(email: string, password: string, displayName?: string) {
+  const currentAuth = getAuth(app);
   // create user
-  const userCred = await createUserWithEmailAndPassword(getAuth(), email, password);
+  const userCred = await createUserWithEmailAndPassword(currentAuth, email, password);
   if (displayName) {
     await updateProfile(userCred.user, { displayName });
   }
@@ -100,21 +109,76 @@ export async function registerWithEmail(email: string, password: string, display
   return userCred.user;
 }
 
-export async function logout() { return signOut(getAuth()); }
+export async function logout() { return signOut(getAuth(app)); }
 
 // Save a calculation for the current user
 export async function saveCalculation(payload: { type: string; inputs: any; result: any; }) {
-  await ensureAnon();
-  const user = getAuth().currentUser;
-  if (!user) throw new Error('not-signed-in');
-  const ref = collection(db, 'users', user.uid, 'calculations');
-  await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
+  // Ensure we have the latest auth state
+  const currentAuth = getAuth(app);
+  
+  if (!currentAuth.currentUser) {
+    // If not logged in, try anonymous sign in
+    await ensureAnon();
+    if (!currentAuth.currentUser) throw new Error('not-signed-in');
+  }
+  
+  const targetUser = currentAuth.currentUser!;
+  
+  if (!db) throw new Error("Firestore not initialized");
+  
+  try {
+    const ref = collection(db, 'users', targetUser.uid, 'calculations');
+    await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
+  } catch (e: any) {
+    console.error("Save calculation failed", e);
+    throw e;
+  }
 }
 
 export async function fetchMyCalculations() {
-  const user = getAuth().currentUser;
+  const currentAuth = getAuth(app);
+  const user = currentAuth.currentUser;
   if (!user) return [];
-  const q = query(collection(db, 'users', user.uid, 'calculations'), orderBy('createdAt', 'desc'));
+  
+  if (!db) {
+    console.error("Firestore DB not initialized");
+    return [];
+  }
+
+  try {
+    const q = query(collection(db, 'users', user.uid, 'calculations'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map(s => ({ id: s.id, ...(s.data() as any) }));
+  } catch (error: any) {
+    console.error("Error fetching calculations for user " + user.uid, error);
+    
+    // If permission denied, return empty array instead of crashing
+    if (error.code === 'permission-denied') {
+      return [];
+    }
+
+    // Fallback: try without ordering (sometimes index issues manifest as permission errors)
+    try {
+      const q2 = query(collection(db, 'users', user.uid, 'calculations'));
+      const snap2 = await getDocs(q2);
+      return snap2.docs.map(s => ({ id: s.id, ...(s.data() as any) }));
+    } catch (err2) {
+      console.error("Fallback fetch failed", err2);
+      return [];
+    }
+  }
+}
+
+// Admin: Fetch all users
+export async function fetchAllUsers() {
+  const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map(s => ({ id: s.id, ...(s.data() as any) }));
+}
+
+// Admin: Fetch calculations for a specific user
+export async function fetchUserCalculations(uid: string) {
+  const q = query(collection(db, 'users', uid, 'calculations'), orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
   return snap.docs.map(s => ({ id: s.id, ...(s.data() as any) }));
 }
