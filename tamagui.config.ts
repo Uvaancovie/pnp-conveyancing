@@ -47,16 +47,26 @@ const config = createTamagui({
   },
   fonts: {
     body: { 
-      family: 'Poppins', 
+      family: 'Poppins_400Regular', 
       size: { 1: 14, 2: 16, 3: 18, 4: 20, 5: 24, true: 16 }, 
       lineHeight: { 1: 20, 2: 24, 3: 26, 4: 28, 5: 32, true: 24 },
-      weight: { 4: '400', 5: '500', 6: '600', 7: '700', true: '400' } 
+      weight: { 4: '400', 5: '500', 6: '600', 7: '700', true: '400' },
+      face: {
+        400: { normal: 'Poppins_400Regular' },
+        500: { normal: 'Poppins_500Medium' },
+        600: { normal: 'Poppins_600SemiBold' },
+        700: { normal: 'Poppins_700Bold' }
+      }
     },
     heading: { 
-      family: 'Poppins', 
+      family: 'Poppins_700Bold', 
       size: { 1: 18, 2: 20, 3: 24, 4: 28, 5: 32, 6: 36, 7: 40, true: 24 }, 
       lineHeight: { 1: 24, 2: 28, 3: 32, 4: 36, 5: 40, 6: 44, 7: 48, true: 32 },
-      weight: { 6: '600', 7: '700', true: '700' } 
+      weight: { 6: '600', 7: '700', true: '700' },
+      face: {
+        600: { normal: 'Poppins_600SemiBold' },
+        700: { normal: 'Poppins_700Bold' }
+      }
     }
   }
 });

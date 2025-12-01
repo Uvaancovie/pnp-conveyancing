@@ -1,12 +1,39 @@
+import {
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  useFonts
+} from '@expo-google-fonts/poppins';
 import { TamaguiProvider } from '@tamagui/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
 import { AuthProvider } from '../contexts/auth-context';
 import config from '../tamagui.config';
 
+SplashScreen.preventAutoHideAsync();
 const qc = new QueryClient();
 
 export default function Layout(){
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <TamaguiProvider config={config}>
       <QueryClientProvider client={qc}>
@@ -15,7 +42,7 @@ export default function Layout(){
             screenOptions={{ 
               headerStyle: { backgroundColor: '#0A5C3B' }, 
               headerTintColor: 'white',
-              headerTitleStyle: { fontWeight: '700' },
+              headerTitleStyle: { fontWeight: '700', fontFamily: 'Poppins_700Bold' },
               headerBackTitleVisible: false,
               animation: 'slide_from_right',
             }} 
