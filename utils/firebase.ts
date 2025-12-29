@@ -3,26 +3,26 @@ console.log('firebase.ts module loading...');
 
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
-    browserLocalPersistence,
-    createUserWithEmailAndPassword,
-    getAuth,
-    initializeAuth,
-    signInAnonymously,
-    signOut,
-    updateProfile,
-    type Auth
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  getAuth,
+  initializeAuth,
+  signInAnonymously,
+  signOut,
+  updateProfile,
+  type Auth
 } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import {
-    addDoc,
-    collection,
-    doc,
-    getDocs,
-    getFirestore,
-    orderBy,
-    query,
-    serverTimestamp,
-    setDoc
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
@@ -128,6 +128,10 @@ export async function saveCalculation(payload: { type: string; inputs: any; resu
   // Ensure we have the latest auth state
   const currentAuth = getAuth(app);
   
+  // Remove undefined fields manually to avoid JSON.stringify issues with non-serializable data if any
+  const cleanPayload: any = { ...payload };
+  Object.keys(cleanPayload).forEach(key => cleanPayload[key] === undefined && delete cleanPayload[key]);
+  
   if (!currentAuth.currentUser) {
     // Try anonymous sign in
     try {
@@ -147,7 +151,7 @@ export async function saveCalculation(payload: { type: string; inputs: any; resu
   
   try {
     const ref = collection(db, 'users', targetUser.uid, 'calculations');
-    await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
+    await addDoc(ref, { ...cleanPayload, createdAt: serverTimestamp() });
   } catch (e: any) {
     console.error("Save calculation failed", e);
     if (e.code === 'permission-denied') {

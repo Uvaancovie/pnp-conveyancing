@@ -33,30 +33,37 @@ export default function Bond(){
   const handleSave = async (name: string) => {
     try {
       let pdfUrl;
-      if (user) {
-        pdfUrl = await generateAndSavePDF(
-          'Bond Cost Calculation',
-          { bondAmount: a },
-          {
-            bondAttorneyFee: atty,
-            postagesAndPetties: d.postage ?? 0,
-            deedsOfficeFees: deeds,
-            electronicGenerationFee: d.electronicGen ?? 0,
-            electronicInstructionFee: d.electronicInstr ?? 0,
-            deedsOfficeSearches: d.deedsSearch ?? 0,
-            totalBondCosts: total
-          },
-          user.uid
-        );
+      // Only generate PDF on native platforms to avoid print dialog on web
+      if (user && Platform.OS !== 'web') {
+        try {
+          pdfUrl = await generateAndSavePDF(
+            'Bond Cost Calculation',
+            { bondAmount: a },
+            {
+              bondAttorneyFee: atty,
+              postagesAndPetties: d.postage ?? 0,
+              deedsOfficeFees: deeds,
+              electronicGenerationFee: d.electronicGen ?? 0,
+              electronicInstructionFee: d.electronicInstr ?? 0,
+              deedsOfficeSearches: d.deedsSearch ?? 0,
+              totalBondCosts: total
+            },
+            user.uid
+          );
+        } catch (e) {
+          console.warn("Failed to generate/save PDF:", e);
+        }
       }
 
-      await saveCalculation({ 
+      const payload: any = { 
         type: 'bond', 
         inputs: { amount: a }, 
         result: { total, atty },
-        name,
-        pdfUrl
-      });
+        name
+      };
+      if (pdfUrl) payload.pdfUrl = pdfUrl;
+
+      await saveCalculation(payload);
       if (Platform.OS === 'web') {
         if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {
           router.push('/profile');

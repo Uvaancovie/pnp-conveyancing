@@ -31,26 +31,33 @@ export default function Repayment(){
   const handleSave = async (name: string) => {
     try {
       let pdfUrl;
-      if (user) {
-        pdfUrl = await generateAndSavePDF(
-          'Bond Repayment Calculation',
-          { bondAmount: a, interestRate: r + '%', term: years + ' years' },
-          {
-            totalInterest: interest,
-            totalLoanRepayment: total,
-            monthlyRepayment: pmt
-          },
-          user.uid
-        );
+      // Only generate PDF on native platforms to avoid print dialog on web
+      if (user && Platform.OS !== 'web') {
+        try {
+          pdfUrl = await generateAndSavePDF(
+            'Bond Repayment Calculation',
+            { bondAmount: a, interestRate: r + '%', term: years + ' years' },
+            {
+              totalInterest: interest,
+              totalLoanRepayment: total,
+              monthlyRepayment: pmt
+            },
+            user.uid
+          );
+        } catch (e) {
+          console.warn("Failed to generate/save PDF:", e);
+        }
       }
 
-      await saveCalculation({ 
+      const payload: any = { 
         type: 'repayment', 
         inputs: { principal: a, rate: r, years }, 
         result: { pmt, total, interest },
-        name,
-        pdfUrl
-      });
+        name
+      };
+      if (pdfUrl) payload.pdfUrl = pdfUrl;
+
+      await saveCalculation(payload);
       if (Platform.OS === 'web') {
         if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {
           router.push('/profile');

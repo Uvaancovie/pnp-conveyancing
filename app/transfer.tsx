@@ -35,32 +35,39 @@ export default function Transfer(){
   const handleSave = async (name: string) => {
     try {
       let pdfUrl;
-      if (user) {
-        pdfUrl = await generateAndSavePDF(
-          'Transfer Cost Calculation',
-          { purchasePrice: p },
-          {
-            transferAttorneyFees: atty,
-            postagesAndPetties: d.postage ?? 0,
-            deedsOfficeFees: deeds,
-            electronicGenerationFee: d.electronicGen ?? 0,
-            fica: d.fica ?? 0,
-            deedsOfficeSearches: d.deedsSearch ?? 0,
-            ratesClearanceFees: d.ratesClear ?? 0,
-            transferDuty: duty,
-            totalTransferCosts: total
-          },
-          user.uid
-        );
+      // Only generate PDF on native platforms to avoid print dialog on web
+      if (user && Platform.OS !== 'web') {
+        try {
+          pdfUrl = await generateAndSavePDF(
+            'Transfer Cost Calculation',
+            { purchasePrice: p },
+            {
+              transferAttorneyFees: atty,
+              postagesAndPetties: d.postage ?? 0,
+              deedsOfficeFees: deeds,
+              electronicGenerationFee: d.electronicGen ?? 0,
+              fica: d.fica ?? 0,
+              deedsOfficeSearches: d.deedsSearch ?? 0,
+              ratesClearanceFees: d.ratesClear ?? 0,
+              transferDuty: duty,
+              totalTransferCosts: total
+            },
+            user.uid
+          );
+        } catch (e) {
+          console.warn("Failed to generate/save PDF:", e);
+        }
       }
 
-      await saveCalculation({ 
+      const payload: any = { 
         type: 'transfer', 
         inputs: { price: p }, 
         result: { total, duty, atty },
-        name,
-        pdfUrl
-      });
+        name
+      };
+      if (pdfUrl) payload.pdfUrl = pdfUrl;
+
+      await saveCalculation(payload);
       if (Platform.OS === 'web') {
         if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {
           router.push('/profile');
