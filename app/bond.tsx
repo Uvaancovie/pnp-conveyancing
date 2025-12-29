@@ -7,15 +7,17 @@ import { Card } from '../components/Card';
 import { Field } from '../components/Field';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
+import { useAuth } from '../contexts/auth-context';
 import { defaultConfig } from '../lib/config';
 import { fixedBandFee, tieredFee } from '../lib/fees';
 import { formatZAR } from '../lib/money';
 import { useConfig } from '../lib/useConfig';
 import { saveCalculation } from '../utils/firebase';
-import { generateAndSharePDF } from '../utils/pdf-generator';
+import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
 export default function Bond(){
   const router = useRouter();
+  const { user } = useAuth();
   const { data } = useConfig();
   const cfg = data ?? defaultConfig;
   const [amount, setAmount] = useState('4000000');
@@ -30,11 +32,30 @@ export default function Bond(){
 
   const handleSave = async (name: string) => {
     try {
+      let pdfUrl;
+      if (user) {
+        pdfUrl = await generateAndSavePDF(
+          'Bond Cost Calculation',
+          { bondAmount: a },
+          {
+            bondAttorneyFee: atty,
+            postagesAndPetties: d.postage ?? 0,
+            deedsOfficeFees: deeds,
+            electronicGenerationFee: d.electronicGen ?? 0,
+            electronicInstructionFee: d.electronicInstr ?? 0,
+            deedsOfficeSearches: d.deedsSearch ?? 0,
+            totalBondCosts: total
+          },
+          user.uid
+        );
+      }
+
       await saveCalculation({ 
         type: 'bond', 
         inputs: { amount: a }, 
         result: { total, atty },
-        name 
+        name,
+        pdfUrl
       });
       if (Platform.OS === 'web') {
         if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {

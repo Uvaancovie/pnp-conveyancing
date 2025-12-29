@@ -1,6 +1,8 @@
 import { printToFileAsync } from 'expo-print';
 import { shareAsync } from 'expo-sharing';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { formatZAR } from '../lib/money';
+import { storage } from './firebase';
 
 const generateHTML = (title: string, inputs: Record<string, any>, results: Record<string, any>) => {
   const inputRows = Object.entries(inputs).map(([key, value]) => `
@@ -59,6 +61,39 @@ export const generateAndSharePDF = async (title: string, inputs: any, results: a
     await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
   } catch (error) {
     console.error('Error generating PDF:', error);
+    throw error;
+  }
+};
+
+/**
+ * Generates a PDF and uploads it to Firebase Storage.
+ * Returns the download URL of the uploaded file.
+ */
+export const generateAndSavePDF = async (title: string, inputs: any, results: any, userId: string): Promise<string> => {
+  try {
+    // 1. Generate HTML and Print to PDF file locally
+    const html = generateHTML(title, inputs, results);
+    const { uri } = await printToFileAsync({ html });
+
+    // 2. Convert URI to Blob
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    // 3. Create a reference in Firebase Storage
+    // Path: pdfs/{userId}/{timestamp}_{title}.pdf
+    const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const filename = `${Date.now()}_${sanitizedTitle}.pdf`;
+    const storageRef = ref(storage, `pdfs/${userId}/${filename}`);
+
+    // 4. Upload the Blob
+    await uploadBytes(storageRef, blob);
+
+    // 5. Get and return the download URL
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+
+  } catch (error) {
+    console.error('Error saving PDF to Firebase:', error);
     throw error;
   }
 };

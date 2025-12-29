@@ -8,15 +8,17 @@ import { Field } from '../components/Field';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
 import { Segmented } from '../components/Segmented';
+import { useAuth } from '../contexts/auth-context';
 import { formatZAR } from '../lib/money';
 import { monthlyRepayment } from '../lib/repayment';
 import { saveCalculation } from '../utils/firebase';
-import { generateAndSharePDF } from '../utils/pdf-generator';
+import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
 const YEARS = [5, 10, 20, 25, 30];
 
 export default function Repayment(){
   const router = useRouter();
+  const { user } = useAuth();
   const [amount, setAmount] = useState('6000000');
   const [rate, setRate] = useState('10.5');
   const [years, setYears] = useState<number>(20);
@@ -28,11 +30,26 @@ export default function Repayment(){
 
   const handleSave = async (name: string) => {
     try {
+      let pdfUrl;
+      if (user) {
+        pdfUrl = await generateAndSavePDF(
+          'Bond Repayment Calculation',
+          { bondAmount: a, interestRate: r + '%', term: years + ' years' },
+          {
+            totalInterest: interest,
+            totalLoanRepayment: total,
+            monthlyRepayment: pmt
+          },
+          user.uid
+        );
+      }
+
       await saveCalculation({ 
         type: 'repayment', 
         inputs: { principal: a, rate: r, years }, 
         result: { pmt, total, interest },
-        name 
+        name,
+        pdfUrl
       });
       if (Platform.OS === 'web') {
         if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {

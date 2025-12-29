@@ -111,6 +111,26 @@ export default function Profile(){
                   </Text>
                 ))}
               </View>
+
+              {c.pdfUrl && (
+                <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#eee' }}>
+                  <Button 
+                    variant="outline" 
+                    onPress={() => {
+                      // Open PDF in browser
+                      import('expo-web-browser').then(WebBrowser => {
+                        WebBrowser.openBrowserAsync(c.pdfUrl);
+                      });
+                    }}
+                    paddingVertical="$2"
+                  >
+                    <XStack gap="$2" alignItems="center">
+                      <Ionicons name="document-text-outline" size={18} color="#0A5C3B" />
+                      <BtnText color="$brand" fontSize="$3">View PDF</BtnText>
+                    </XStack>
+                  </Button>
+                </View>
+              )}
             </View>
           ))
         )}

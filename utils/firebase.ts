@@ -24,6 +24,7 @@ import {
     serverTimestamp,
     setDoc
 } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
 
 // Only import the polyfill on native platforms
@@ -73,6 +74,9 @@ console.log('Firebase auth exported:', !!auth, typeof auth);
 export const db: Firestore = getFirestore(app);
 console.log('Firebase db exported:', !!db, typeof db);
 
+// Storage
+export const storage = getStorage(app);
+
 // Ensure we're signed in anonymously before writing
 async function ensureAnon() {
   const currentAuth = getAuth(app);
@@ -120,7 +124,7 @@ export async function registerWithEmail(email: string, password: string, display
 export async function logout() { return signOut(getAuth(app)); }
 
 // Save a calculation for the current user
-export async function saveCalculation(payload: { type: string; inputs: any; result: any; name?: string }) {
+export async function saveCalculation(payload: { type: string; inputs: any; result: any; name?: string; pdfUrl?: string }) {
   // Ensure we have the latest auth state
   const currentAuth = getAuth(app);
   

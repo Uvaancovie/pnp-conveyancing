@@ -7,16 +7,18 @@ import { Card } from '../components/Card';
 import { Field } from '../components/Field';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
+import { useAuth } from '../contexts/auth-context';
 import { defaultConfig } from '../lib/config';
 import { calcTransferDuty } from '../lib/duty';
 import { fixedBandFee, tieredFee } from '../lib/fees';
 import { formatZAR } from '../lib/money';
 import { useConfig } from '../lib/useConfig';
 import { saveCalculation } from '../utils/firebase';
-import { generateAndSharePDF } from '../utils/pdf-generator';
+import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
 export default function Transfer(){
   const router = useRouter();
+  const { user } = useAuth();
   const { data } = useConfig();
   const cfg = data ?? defaultConfig;
   const [price, setPrice] = useState('2000000');
@@ -32,11 +34,32 @@ export default function Transfer(){
 
   const handleSave = async (name: string) => {
     try {
+      let pdfUrl;
+      if (user) {
+        pdfUrl = await generateAndSavePDF(
+          'Transfer Cost Calculation',
+          { purchasePrice: p },
+          {
+            transferAttorneyFees: atty,
+            postagesAndPetties: d.postage ?? 0,
+            deedsOfficeFees: deeds,
+            electronicGenerationFee: d.electronicGen ?? 0,
+            fica: d.fica ?? 0,
+            deedsOfficeSearches: d.deedsSearch ?? 0,
+            ratesClearanceFees: d.ratesClear ?? 0,
+            transferDuty: duty,
+            totalTransferCosts: total
+          },
+          user.uid
+        );
+      }
+
       await saveCalculation({ 
         type: 'transfer', 
         inputs: { price: p }, 
         result: { total, duty, atty },
-        name 
+        name,
+        pdfUrl
       });
       if (Platform.OS === 'web') {
         if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {
