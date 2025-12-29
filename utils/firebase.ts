@@ -120,7 +120,7 @@ export async function registerWithEmail(email: string, password: string, display
 export async function logout() { return signOut(getAuth(app)); }
 
 // Save a calculation for the current user
-export async function saveCalculation(payload: { type: string; inputs: any; result: any; }) {
+export async function saveCalculation(payload: { type: string; inputs: any; result: any; name?: string }) {
   // Ensure we have the latest auth state
   const currentAuth = getAuth(app);
   

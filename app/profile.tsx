@@ -81,7 +81,14 @@ export default function Profile(){
               borderColor: '#eee'
             }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 16, textTransform: 'capitalize' }}>{c.type}</Text>
+                <View>
+                  {c.name ? (
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{c.name}</Text>
+                  ) : null}
+                  <Text style={{ fontWeight: c.name ? 'normal' : 'bold', fontSize: c.name ? 14 : 16, textTransform: 'capitalize', color: c.name ? '#666' : '#000' }}>
+                    {c.type}
+                  </Text>
+                </View>
                 <Text style={{ color: '#666' }}>
                   {c.createdAt?.seconds ? new Date(c.createdAt.seconds * 1000).toLocaleDateString() : ''}
                 </Text>
