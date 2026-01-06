@@ -73,9 +73,8 @@ export async function registerWithEmail(email: string, password: string, display
 export async function logout() { return signOut(getAuth()); }
 
 export async function saveCalculation(payload: { type: string; inputs: any; result: any; name?: string }) {
-  await ensureAnon();
   const user = getAuth().currentUser;
-  if (!user) throw new Error('not-signed-in');
+  if (!user || user.isAnonymous) throw new Error('not-signed-in');
   const ref = collection(db, `users/${user.uid}/calculations`);
   await addDoc(ref, { ...payload, createdAt: serverTimestamp() });
 }

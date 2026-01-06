@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
-  View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
+  View,
 } from 'react-native';
-import { Link, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/auth-context';
 import { UserRole } from '../types/auth';
 
@@ -52,7 +52,7 @@ export default function RegisterScreen() {
     try {
       await register(email, password, displayName, role, phoneNumber);
       Alert.alert('Success', 'Account created successfully!', [
-        { text: 'OK', onPress: () => router.replace('/') }
+        { text: 'OK', onPress: () => router.replace('/profile') }
       ]);
     } catch (error: any) {
       Alert.alert('Registration Failed', error.message || 'Could not create account');
@@ -98,10 +98,10 @@ export default function RegisterScreen() {
                     role === 'customer' && styles.roleButtonTextActive,
                   ]}
                 >
-                  Customer
+                  Homeowner
                 </Text>
                 <Text style={styles.roleDescription}>
-                  I need property transfer services
+                  I want to calculate property costs
                 </Text>
               </TouchableOpacity>
 
@@ -123,10 +123,10 @@ export default function RegisterScreen() {
                     role === 'agent' && styles.roleButtonTextActive,
                   ]}
                 >
-                  Agent
+                  Realtor
                 </Text>
                 <Text style={styles.roleDescription}>
-                  I'm a conveyancing professional
+                  I work with property clients
                 </Text>
               </TouchableOpacity>
             </View>

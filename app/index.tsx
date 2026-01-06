@@ -123,7 +123,6 @@ export default function Home(){
       <YStack>
         <H2 fontSize="$5" color="$brand" marginBottom="$3">More</H2>
         <NavCard title="Legal & Disclaimer" href="/legal" icon="document-text" />
-        <NavCard title="Admin Dashboard" subtitle="Manage users" href="/admin" icon="settings" />
       </YStack>
     </ScrollView>
   );

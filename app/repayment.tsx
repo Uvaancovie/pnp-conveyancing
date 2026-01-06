@@ -4,6 +4,7 @@ import { Alert, Platform, ScrollView } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { ConfirmActionModal } from '../components/ConfirmActionModal';
 import { Field } from '../components/Field';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
@@ -23,10 +24,13 @@ export default function Repayment(){
   const [rate, setRate] = useState('10.5');
   const [years, setYears] = useState<number>(20);
   const [modalVisible, setModalVisible] = useState(false);
+  const [savedPromptVisible, setSavedPromptVisible] = useState(false);
   const a = Number((amount||'').replace(/\s|,/g, '')) || 0;
   const r = Number((rate||'').replace(',', '.')) || 0;
 
   const { pmt, total, interest } = monthlyRepayment(a, r, years);
+
+  const canSave = !!user && (user.role === 'customer' || user.role === 'agent');
 
   const handleSave = async (name: string) => {
     try {
@@ -58,20 +62,11 @@ export default function Repayment(){
       if (pdfUrl) payload.pdfUrl = pdfUrl;
 
       await saveCalculation(payload);
-      if (Platform.OS === 'web') {
-        if (window.confirm('Calculation saved successfully! Would you like to view your profile?')) {
-          router.push('/profile');
-        }
-      } else {
-        Alert.alert('Saved', 'Calculation saved to your profile.', [
-          { text: 'Stay Here', style: 'cancel' },
-          { text: 'View Profile', onPress: () => router.push('/profile') }
-        ]);
-      }
+      setSavedPromptVisible(true);
     } catch (err: any) { 
       console.error(err);
       if (err.message === 'not-signed-in') {
-        Alert.alert('Please sign in', 'Save requires a registered account.');
+        router.push('/register');
       } else if (err.code === 'permission-denied') {
         Alert.alert('Permission Error', 'Your security rules are blocking this action. Please check Firebase Console.');
       } else {
@@ -113,7 +108,17 @@ export default function Repayment(){
           <Button flex={1} onPress={handleExport}><BtnText>Export PDF / Share</BtnText></Button>
         </XStack>
 
-        <Button onPress={() => setModalVisible(true)}><BtnText>Save to Profile</BtnText></Button>
+        <Button
+          onPress={() => {
+            if (!canSave) {
+              router.push('/register');
+              return;
+            }
+            setModalVisible(true);
+          }}
+        >
+          <BtnText>Save to Profile</BtnText>
+        </Button>
 
         <Button variant="outline" onPress={() => router.push('/profile')}>
             <BtnText color="$brand">View My Profile</BtnText>
@@ -134,6 +139,20 @@ export default function Repayment(){
         visible={modalVisible} 
         onClose={() => setModalVisible(false)} 
         onSave={handleSave}
+        userRole={user?.role}
+      />
+
+      <ConfirmActionModal
+        visible={savedPromptVisible}
+        title="Saved"
+        message="Calculation saved successfully! Would you like to view your profile?"
+        confirmText="View Profile"
+        cancelText="Stay Here"
+        onCancel={() => setSavedPromptVisible(false)}
+        onConfirm={() => {
+          setSavedPromptVisible(false);
+          router.push('/profile');
+        }}
       />
     </ScrollView>
   );

@@ -3,26 +3,26 @@ console.log('firebase.ts module loading...');
 
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
-  browserLocalPersistence,
-  createUserWithEmailAndPassword,
-  getAuth,
-  initializeAuth,
-  signInAnonymously,
-  signOut,
-  updateProfile,
-  type Auth
+    browserLocalPersistence,
+    createUserWithEmailAndPassword,
+    getAuth,
+    initializeAuth,
+    signInAnonymously,
+    signOut,
+    updateProfile,
+    type Auth
 } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    getFirestore,
+    orderBy,
+    query,
+    serverTimestamp,
+    setDoc
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
@@ -132,20 +132,10 @@ export async function saveCalculation(payload: { type: string; inputs: any; resu
   const cleanPayload: any = { ...payload };
   Object.keys(cleanPayload).forEach(key => cleanPayload[key] === undefined && delete cleanPayload[key]);
   
-  if (!currentAuth.currentUser) {
-    // Try anonymous sign in
-    try {
-      await ensureAnon();
-    } catch (err) {
-      throw new Error('Firebase Authentication is not enabled. Please enable Email/Password and Anonymous auth in Firebase Console.');
-    }
-    
-    if (!currentAuth.currentUser) {
-      throw new Error('not-signed-in');
-    }
+  const targetUser = currentAuth.currentUser;
+  if (!targetUser || targetUser.isAnonymous) {
+    throw new Error('not-signed-in');
   }
-  
-  const targetUser = currentAuth.currentUser!;
   
   if (!db) throw new Error("Firestore not initialized");
   

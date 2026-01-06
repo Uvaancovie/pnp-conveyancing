@@ -1,5 +1,14 @@
-import { YStack, Text, Input as TInput } from 'tamagui';
-export function Field({ label, ...props }: any){
+import { Text, Input as TInput, YStack } from 'tamagui';
+
+export function Field({ label, ...props }: any) {
+  const {
+    keyboardType,
+    value,
+    onChangeText,
+    placeholder,
+    ...rest
+  } = props;
+
   return (
     <YStack gap="$1">
       <Text color="$color" fontWeight="600">{label}</Text>
@@ -11,10 +20,11 @@ export function Field({ label, ...props }: any){
         backgroundColor="$bg" 
         color="$color"
         focusStyle={{ borderColor: '$brand', borderWidth: 2 }}
-        keyboardType={props.keyboardType}
-        value={props.value}
-        onChangeText={props.onChangeText}
-        placeholder={props.placeholder}
+        keyboardType={keyboardType}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        {...rest}
       />
     </YStack>
   );

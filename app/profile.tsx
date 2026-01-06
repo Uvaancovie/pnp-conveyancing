@@ -15,6 +15,8 @@ export default function Profile(){
   const [calcs, setCalcs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const roleLabel = user?.role === 'admin' ? 'Admin' : user?.role === 'agent' ? 'Realtor' : 'Homeowner';
+
   useEffect(() => {
     if (!user) return;
     let mounted = true;
@@ -48,14 +50,52 @@ export default function Profile(){
   return (
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
       <Card title="My Profile">
-        <YStack padding="$2" gap="$2">
-          <XStack alignItems="center" gap="$3">
-            <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: '#0A5C3B', alignItems: 'center', justifyContent: 'center' }}>
-              <Ionicons name="person" size={24} color="white" />
-            </View>
-            <YStack>
-              <TText fontWeight="700" fontSize="$5">{user.displayName || 'User'}</TText>
-              <TText color="$muted" fontSize="$3">{user.email}</TText>
+        <YStack padding="$2" gap="$4">
+          <XStack alignItems="center" justifyContent="space-between" gap="$3">
+            <XStack alignItems="center" gap="$3" flexShrink={1}>
+              <YStack
+                width={52}
+                height={52}
+                borderRadius="$10"
+                backgroundColor="$brand"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Ionicons name="person" size={24} color="white" />
+              </YStack>
+              <YStack flexShrink={1}>
+                <TText fontWeight="700" fontSize="$5" numberOfLines={1}>{user.displayName || 'User'}</TText>
+                <TText color="$muted" fontSize="$3" numberOfLines={1}>{user.email}</TText>
+              </YStack>
+            </XStack>
+
+            <YStack
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              borderRadius="$10"
+              backgroundColor="$card"
+              borderWidth={1}
+              borderColor="$border"
+              alignItems="center"
+              minWidth={96}
+            >
+              <TText fontSize="$2" color="$muted">Role</TText>
+              <TText fontWeight="700" color="$brand">{roleLabel}</TText>
+            </YStack>
+          </XStack>
+
+          <XStack gap="$3">
+            <YStack
+              flex={1}
+              padding="$3"
+              borderRadius="$4"
+              backgroundColor="$card"
+              borderWidth={1}
+              borderColor="$border"
+            >
+              <TText fontSize="$2" color="$muted">Saved calculations</TText>
+              <TText fontSize="$7" fontWeight="800" color="$brand">{calcs.length}</TText>
+              <TText fontSize="$2" color="$muted">Total you’ve saved</TText>
             </YStack>
           </XStack>
         </YStack>
@@ -147,15 +187,10 @@ export default function Profile(){
           </Button>
         </XStack>
         
-        <Button 
-          backgroundColor="#dc3545" 
-          borderColor="#dc3545"
-          marginTop="$2"
-          onPress={async () => {
-            await logout().catch(() => {});
-            router.replace('/');
-          }}
-        >
+        <Button marginTop="$2" onPress={async () => {
+          await logout().catch(() => {});
+          router.replace('/');
+        }}>
           <BtnText>Sign Out</BtnText>
         </Button>
       </YStack>

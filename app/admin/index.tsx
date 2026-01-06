@@ -5,7 +5,14 @@ import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-nat
 import { Text, XStack, YStack } from 'tamagui';
 import { BtnText, Button } from '../../components/Button';
 import { Card } from '../../components/Card';
+import { Field } from '../../components/Field';
 import { useAuth } from '../../contexts/auth-context';
+import {
+  getAdminDashboardToken,
+  loginAdminDashboard,
+  setAdminDashboardToken,
+  verifyAdminDashboardToken,
+} from '../../utils/adminDashboardAuth';
 
 // Firebase imports - initialize directly to avoid module loading issues
 import { getApp, getApps, initializeApp } from 'firebase/app';
@@ -117,21 +124,77 @@ interface DashboardStats {
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserWithCalcs[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [gateLoading, setGateLoading] = useState(true);
+  const [adminAuthed, setAdminAuthed] = useState(false);
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminAuthBusy, setAdminAuthBusy] = useState(false);
+  const [adminAuthError, setAdminAuthError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'analytics'>('overview');
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (!authLoading) {
-      // Allow everyone to access admin dashboard for now
-      // if (!user || user.role !== 'admin') {
-      //   router.replace('/');
-      //   return;
-      // }
-      loadDashboardData();
+    if (authLoading) return;
+
+    // Require a signed-in app user before admin access.
+    if (!user) {
+      router.replace('/login');
+      return;
     }
-  }, [user, authLoading]);
+
+    // If the user already has the admin role, allow immediately.
+    if (user.role === 'admin') {
+      setAdminAuthed(true);
+      setGateLoading(false);
+      loadDashboardData();
+      return;
+    }
+
+    // Otherwise, require the admin dashboard username/password token.
+    (async () => {
+      try {
+        const token = await getAdminDashboardToken();
+        if (!token) {
+          setAdminAuthed(false);
+          return;
+        }
+
+        const ok = await verifyAdminDashboardToken(token);
+        setAdminAuthed(ok);
+        if (ok) {
+          loadDashboardData();
+        }
+      } catch {
+        setAdminAuthed(false);
+      } finally {
+        setGateLoading(false);
+      }
+    })();
+  }, [user?.uid, user?.role, authLoading]);
+
+  async function handleAdminLogin() {
+    if (!adminUsername.trim() || !adminPassword) {
+      setAdminAuthError('Enter username and password.');
+      return;
+    }
+
+    setAdminAuthBusy(true);
+    setAdminAuthError(null);
+    try {
+      const token = await loginAdminDashboard(adminUsername.trim(), adminPassword);
+      await setAdminDashboardToken(token);
+      setAdminAuthed(true);
+      await loadDashboardData();
+    } catch {
+      setAdminAuthError('Invalid username or password.');
+      setAdminAuthed(false);
+    } finally {
+      setAdminAuthBusy(false);
+      setGateLoading(false);
+    }
+  }
 
   async function loadDashboardData() {
     try {
@@ -279,7 +342,59 @@ export default function AdminDashboard() {
     return `R${value}`;
   };
 
-  if (authLoading || loading) {
+  if (authLoading || gateLoading) {
+    return (
+      <YStack flex={1} alignItems="center" justifyContent="center" padding="$6">
+        <ActivityIndicator size="large" color="#0A5C3B" />
+        <Text color="$muted" marginTop="$3">Loading dashboard...</Text>
+      </YStack>
+    );
+  }
+
+  if (!adminAuthed) {
+    return (
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <YStack gap="$4">
+          <YStack marginBottom="$2">
+            <Text fontSize="$7" fontWeight="700" color="$brand">Admin Access</Text>
+            <Text color="$muted">Enter admin dashboard credentials to continue.</Text>
+          </YStack>
+
+          <Card>
+            <YStack gap="$3">
+              <Field
+                label="Admin Username"
+                value={adminUsername}
+                onChangeText={setAdminUsername}
+                placeholder="Username"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <Field
+                label="Admin Password"
+                value={adminPassword}
+                onChangeText={setAdminPassword}
+                placeholder="Password"
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+
+              {adminAuthError ? (
+                <Text color="$red10" fontSize="$2">{adminAuthError}</Text>
+              ) : null}
+
+              <Button onPress={handleAdminLogin} disabled={adminAuthBusy}>
+                <BtnText>{adminAuthBusy ? 'Signing in…' : 'Sign In'}</BtnText>
+              </Button>
+            </YStack>
+          </Card>
+        </YStack>
+      </ScrollView>
+    );
+  }
+
+  if (loading) {
     return (
       <YStack flex={1} alignItems="center" justifyContent="center" padding="$6">
         <ActivityIndicator size="large" color="#0A5C3B" />
