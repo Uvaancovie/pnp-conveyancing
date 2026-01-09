@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { Image, ScrollView, View } from 'react-native';
-import { Card, H1, H2, Paragraph, Text, XStack, YStack } from 'tamagui';
+import { ScrollView, View } from 'react-native';
+import { Card, H2, Paragraph, Text, XStack, YStack } from 'tamagui';
+import { galleryImages } from '../assets/images';
+import { ImageGallery } from '../components/ImageGallery';
 import { useAuth } from '../contexts/auth-context';
 
 function NavCard({ title, subtitle, href, icon }: { title: string; subtitle?: string; href: string; icon: keyof typeof Ionicons.glyphMap }){
@@ -55,11 +57,15 @@ export default function Home(){
 
   return (
     <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 60 }}>
-      <YStack alignItems="center" marginBottom="$6" gap="$3">
-        <Image source={require('../assets/logo.png')} style={{ width: 80, height: 80, borderRadius: 20 }} />
-        <H1 fontSize="$7" textAlign="center" color="$brand">Pather & Pather</H1>
-        <Text color="$muted" fontSize="$4" textAlign="center">Conveyancing Companion</Text>
-      </YStack>
+      {/* Hero Section */}
+      <ImageGallery 
+        images={galleryImages}
+        title="Pather & Pather"
+        subtitle="Conveyancing Companion"
+        height={340}
+        autoPlayInterval={3500}
+        showIndicators={true}
+      />
       
       {/* Quick Actions */}
       <YStack marginBottom="$5">

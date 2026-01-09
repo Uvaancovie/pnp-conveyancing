@@ -2,9 +2,11 @@ import { Link, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Alert, ScrollView } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
+import { heroImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
+import { HeroImage } from '../components/HeroImage';
 import { useAuth } from '../contexts/auth-context';
 import { UserRole } from '../types/auth';
 
@@ -34,7 +36,15 @@ export default function SignUp(){
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <Card title="Create Account" subtitle="Register to save your calculations">
+      <HeroImage 
+        source={heroImages.signup}
+        title="Create Account"
+        subtitle="Register to save your calculations"
+        height={180}
+        overlayOpacity={0.55}
+      />
+      
+      <Card>
         <YStack gap="$3">
           <YStack gap="$2">
             <Text color="$muted">Register as</Text>

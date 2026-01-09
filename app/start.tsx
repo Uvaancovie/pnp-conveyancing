@@ -4,9 +4,11 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Platform, ScrollView } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
+import { galleryImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
+import { ImageGallery } from '../components/ImageGallery';
 import theme from '../config/theme.json';
 import { createLead } from '../utils/firebase';
 
@@ -64,7 +66,16 @@ export default function Start(){
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <Card title="Start My Transfer" subtitle="Fill in your details and we'll get in touch">
+      <ImageGallery 
+        images={galleryImages}
+        title="Start My Transfer"
+        subtitle="Fill in your details and we'll get in touch"
+        height={200}
+        autoPlayInterval={3500}
+        showIndicators={true}
+      />
+      
+      <Card>
         <YStack gap="$3">
           <Field label="Full Name" value={fullName} onChangeText={setFullName} placeholder="John Smith" />
           <Field label="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="083 123 4567" />

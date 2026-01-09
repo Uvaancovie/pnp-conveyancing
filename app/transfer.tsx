@@ -2,10 +2,12 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Platform, ScrollView } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
+import { heroImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { ConfirmActionModal } from '../components/ConfirmActionModal';
 import { Field } from '../components/Field';
+import { HeroImage } from '../components/HeroImage';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
 import { useAuth } from '../contexts/auth-context';
@@ -109,7 +111,15 @@ export default function Transfer(){
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <Card title="Transfer Cost Calculator" subtitle="Quotation values subject to change.">
+      <HeroImage 
+        source={heroImages.transfer}
+        title="Transfer Costs"
+        subtitle="Calculate your property transfer fees"
+        height={160}
+        overlayOpacity={0.6}
+      />
+      
+      <Card subtitle="Quotation values subject to change.">
         <Field label="Purchase Price (R)" keyboardType="numeric" value={price} onChangeText={setPrice} placeholder="2 000 000" />
       </Card>
       <Card title="Results">

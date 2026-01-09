@@ -1,17 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Input, Text, XStack, YStack } from 'tamagui';
+import { heroImages } from '../assets/images';
+import { BtnText, Button } from '../components/Button';
+import { HeroImage } from '../components/HeroImage';
 import { useAuth } from '../contexts/auth-context';
 
 export default function LoginScreen() {
@@ -46,217 +40,138 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={{ flex: 1, backgroundColor: '#f8f9fa' }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="log-in" size={60} color="#2C5530" />
-          </View>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to your account</Text>
-        </View>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
+        <HeroImage 
+          source={heroImages.login}
+          title="Welcome Back"
+          subtitle="Sign in to your account"
+          height={200}
+          overlayOpacity={0.55}
+        />
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Ionicons name="mail" size={20} color="#666" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Email Address"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed" size={20} color="#666" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.eyeIcon}
+        <YStack 
+          backgroundColor="$card" 
+          borderRadius="$4" 
+          padding="$4" 
+          borderWidth={1} 
+          borderColor="$border"
+          marginBottom="$4"
+          gap="$3"
+        >
+          {/* Email Input */}
+          <YStack gap="$2">
+            <Text color="$muted" fontSize="$3" fontWeight="600">Email Address</Text>
+            <XStack 
+              backgroundColor="$background" 
+              borderRadius="$3" 
+              borderWidth={1} 
+              borderColor="$border"
+              alignItems="center"
+              paddingHorizontal="$3"
             >
-              <Ionicons
-                name={showPassword ? 'eye-off' : 'eye'}
-                size={20}
-                color="#666"
+              <Ionicons name="mail" size={20} color="#666" />
+              <Input
+                flex={1}
+                backgroundColor="transparent"
+                borderWidth={0}
+                placeholder="email@example.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
               />
-            </TouchableOpacity>
-          </View>
+            </XStack>
+          </YStack>
 
-          <TouchableOpacity
-            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
+          {/* Password Input */}
+          <YStack gap="$2">
+            <Text color="$muted" fontSize="$3" fontWeight="600">Password</Text>
+            <XStack 
+              backgroundColor="$background" 
+              borderRadius="$3" 
+              borderWidth={1} 
+              borderColor="$border"
+              alignItems="center"
+              paddingHorizontal="$3"
+            >
+              <Ionicons name="lock-closed" size={20} color="#666" />
+              <Input
+                flex={1}
+                backgroundColor="transparent"
+                borderWidth={0}
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <XStack 
+                pressStyle={{ opacity: 0.7 }}
+                onPress={() => setShowPassword(!showPassword)}
+                padding="$2"
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off' : 'eye'}
+                  size={20}
+                  color="#666"
+                />
+              </XStack>
+            </XStack>
+          </YStack>
+
+          {/* Login Button */}
+          <Button 
+            onPress={handleLogin} 
+            opacity={loading ? 0.7 : 1}
+            marginTop="$2"
           >
-            <Text style={styles.loginButtonText}>
-              {loading ? 'Signing In...' : 'Sign In'}
-            </Text>
-          </TouchableOpacity>
+            <XStack alignItems="center" gap="$2">
+              <Ionicons name="log-in" size={20} color="white" />
+              <BtnText>{loading ? 'Signing In...' : 'Sign In'}</BtnText>
+            </XStack>
+          </Button>
+        </YStack>
 
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.dividerLine} />
-          </View>
+        {/* Divider */}
+        <XStack alignItems="center" marginVertical="$4">
+          <YStack flex={1} height={1} backgroundColor="$border" />
+          <Text color="$muted" marginHorizontal="$3" fontSize="$3">OR</Text>
+          <YStack flex={1} height={1} backgroundColor="$border" />
+        </XStack>
 
-          <TouchableOpacity 
-            style={styles.registerButton}
+        {/* Secondary Actions */}
+        <YStack gap="$3">
+          <Button 
+            variant="secondary"
             onPress={() => router.push('/signup' as any)}
           >
-            <Text style={styles.registerButtonText}>Create New Account</Text>
-          </TouchableOpacity>
+            <BtnText color="$brand">Create New Account</BtnText>
+          </Button>
 
-          <TouchableOpacity 
-            style={styles.guestButton}
-            onPress={() => router.push('/')}
-          >
-            <Text style={styles.guestButtonText}>Continue as Guest</Text>
-          </TouchableOpacity>
-        </View>
+          <XStack justifyContent="center" marginTop="$2">
+            <Text 
+              color="$muted" 
+              fontSize="$3"
+              textDecorationLine="underline"
+              pressStyle={{ opacity: 0.7 }}
+              onPress={() => router.push('/')}
+            >
+              Continue as Guest
+            </Text>
+          </XStack>
+        </YStack>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
+        {/* Footer */}
+        <YStack marginTop="$6" alignItems="center">
+          <Text color="$muted" fontSize="$2" textAlign="center">
             By signing in, you agree to our Terms of Service and Privacy Policy
           </Text>
-        </View>
+        </YStack>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#e8f5e9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2C5530',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-  form: {
-    marginBottom: 30,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    marginBottom: 16,
-    paddingHorizontal: 16,
-  },
-  inputIcon: {
-    marginRight: 12,
-  },
-  input: {
-    flex: 1,
-    height: 50,
-    fontSize: 16,
-    color: '#333',
-  },
-  eyeIcon: {
-    padding: 8,
-  },
-  loginButton: {
-    backgroundColor: '#2C5530',
-    borderRadius: 12,
-    height: 54,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  loginButtonDisabled: {
-    opacity: 0.6,
-  },
-  loginButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#e0e0e0',
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    color: '#999',
-    fontSize: 14,
-  },
-  registerButton: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    height: 54,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#2C5530',
-  },
-  registerButtonText: {
-    color: '#2C5530',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  guestButton: {
-    marginTop: 16,
-    alignItems: 'center',
-    padding: 12,
-  },
-  guestButtonText: {
-    color: '#666',
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
-  footer: {
-    marginTop: 'auto',
-    paddingTop: 20,
-  },
-  footerText: {
-    textAlign: 'center',
-    color: '#999',
-    fontSize: 12,
-    lineHeight: 18,
-  },
-});

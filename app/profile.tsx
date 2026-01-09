@@ -3,8 +3,10 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { Text as TText, XStack, YStack } from 'tamagui';
+import { heroImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { HeroImage } from '../components/HeroImage';
 import { useAuth } from '../contexts/auth-context';
 import { formatZAR } from '../lib/money';
 import { fetchMyCalculations } from '../utils/firebase';
@@ -30,7 +32,15 @@ export default function Profile(){
   if (!user) {
     return (
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <Card title="Not Signed In">
+        <HeroImage 
+          source={heroImages.profile}
+          title="My Profile"
+          subtitle="Sign in to view your saved calculations"
+          height={180}
+          overlayOpacity={0.55}
+        />
+        
+        <Card>
           <YStack gap="$4" padding="$2">
             <TText color="$muted" textAlign="center">Sign in to view your profile and saved calculations.</TText>
             <XStack gap="$3" justifyContent="center">
@@ -49,7 +59,15 @@ export default function Profile(){
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <Card title="My Profile">
+      <HeroImage 
+        source={heroImages.profile}
+        title={user.displayName || 'My Profile'}
+        subtitle={roleLabel}
+        height={180}
+        overlayOpacity={0.55}
+      />
+      
+      <Card>
         <YStack padding="$2" gap="$4">
           <XStack alignItems="center" justifyContent="space-between" gap="$3">
             <XStack alignItems="center" gap="$3" flexShrink={1}>
