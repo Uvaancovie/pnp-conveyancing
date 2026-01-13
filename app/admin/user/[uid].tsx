@@ -19,7 +19,7 @@ export default function UserDetails() {
   useEffect(() => {
     if (!authLoading) {
       if (!user || user.role !== 'admin') {
-        router.replace('/');
+        router.replace('/dashboard');
         return;
       }
       if (uid) loadCalcs();

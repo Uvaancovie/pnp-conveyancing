@@ -3,10 +3,10 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Input, Text, XStack, YStack } from 'tamagui';
-import { heroImages } from '../assets/images';
-import { BtnText, Button } from '../components/Button';
-import { HeroImage } from '../components/HeroImage';
-import { useAuth } from '../contexts/auth-context';
+import { heroImages } from '../../assets/images';
+import { BtnText, Button } from '../../components/Button';
+import { HeroImage } from '../../components/HeroImage';
+import { useAuth } from '../../contexts/auth-context';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -61,7 +61,6 @@ export default function LoginScreen() {
           marginBottom="$4"
           gap="$3"
         >
-          {/* Email Input */}
           <YStack gap="$2">
             <Text color="$muted" fontSize="$3" fontWeight="600">Email Address</Text>
             <XStack 
@@ -87,7 +86,6 @@ export default function LoginScreen() {
             </XStack>
           </YStack>
 
-          {/* Password Input */}
           <YStack gap="$2">
             <Text color="$muted" fontSize="$3" fontWeight="600">Password</Text>
             <XStack 
@@ -123,7 +121,6 @@ export default function LoginScreen() {
             </XStack>
           </YStack>
 
-          {/* Login Button */}
           <Button 
             onPress={handleLogin} 
             opacity={loading ? 0.7 : 1}
@@ -136,14 +133,12 @@ export default function LoginScreen() {
           </Button>
         </YStack>
 
-        {/* Divider */}
         <XStack alignItems="center" marginVertical="$4">
           <YStack flex={1} height={1} backgroundColor="$border" />
           <Text color="$muted" marginHorizontal="$3" fontSize="$3">OR</Text>
           <YStack flex={1} height={1} backgroundColor="$border" />
         </XStack>
 
-        {/* Secondary Actions */}
         <YStack gap="$3">
           <Button 
             variant="secondary"
@@ -165,7 +160,6 @@ export default function LoginScreen() {
           </XStack>
         </YStack>
 
-        {/* Footer */}
         <YStack marginTop="$6" alignItems="center">
           <Text color="$muted" fontSize="$2" textAlign="center">
             By signing in, you agree to our Terms of Service and Privacy Policy

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet } from 'react-native';
+import { Text, YStack } from 'tamagui';
 
 export default function SplashScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -23,7 +24,7 @@ export default function SplashScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <YStack flex={1} backgroundColor="$brand" alignItems="center" justifyContent="center">
       <Animated.View
         style={[
           styles.logoContainer,
@@ -33,28 +34,22 @@ export default function SplashScreen() {
           },
         ]}
       >
-        <View style={styles.iconCircle}>
+        <YStack style={styles.iconCircle}>
           <Ionicons name="home" size={80} color="#fff" />
-        </View>
+        </YStack>
         <Text style={styles.title}>PnP Conveyancer</Text>
         <Text style={styles.subtitle}>Property Transfer Made Simple</Text>
       </Animated.View>
       <Animated.View style={[styles.loadingContainer, { opacity: fadeAnim }]}>
-        <View style={styles.loadingDot} />
-        <View style={[styles.loadingDot, styles.loadingDotDelay1]} />
-        <View style={[styles.loadingDot, styles.loadingDotDelay2]} />
+        <YStack style={styles.loadingDot} />
+        <YStack style={[styles.loadingDot, styles.loadingDotDelay1]} />
+        <YStack style={[styles.loadingDot, styles.loadingDotDelay2]} />
       </Animated.View>
-    </View>
+    </YStack>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#2C5530',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   logoContainer: {
     alignItems: 'center',
   },
@@ -75,7 +70,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#e8f5e9',
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
   },
   loadingContainer: {

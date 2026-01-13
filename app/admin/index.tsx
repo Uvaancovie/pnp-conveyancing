@@ -8,10 +8,10 @@ import { Card } from '../../components/Card';
 import { Field } from '../../components/Field';
 import { useAuth } from '../../contexts/auth-context';
 import {
-  getAdminDashboardToken,
-  loginAdminDashboard,
-  setAdminDashboardToken,
-  verifyAdminDashboardToken,
+    getAdminDashboardToken,
+    loginAdminDashboard,
+    setAdminDashboardToken,
+    verifyAdminDashboardToken,
 } from '../../utils/adminDashboardAuth';
 
 // Firebase imports - initialize directly to avoid module loading issues
@@ -751,7 +751,7 @@ export default function AdminDashboard() {
 
       {/* Back Button */}
       <YStack marginTop="$4">
-        <Button backgroundColor="$brand" onPress={() => router.push('/')}>
+        <Button backgroundColor="$brand" onPress={() => router.push('/dashboard')}>
           <BtnText>Back to Home</BtnText>
         </Button>
       </YStack>

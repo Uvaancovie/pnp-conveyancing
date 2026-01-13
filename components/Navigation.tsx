@@ -30,7 +30,7 @@ export function ScreenHeader({ title, showBack = true, showHome = true }: Props)
       </XStack>
       
       {showHome && (
-        <TouchableOpacity onPress={() => router.push('/')} hitSlop={8}>
+        <TouchableOpacity onPress={() => router.push('/dashboard')} hitSlop={8}>
           <Ionicons name="home" size={22} color="white" />
         </TouchableOpacity>
       )}
@@ -91,7 +91,7 @@ export function QuickNavBar() {
   const router = useRouter();
   
   const items: { icon: keyof typeof Ionicons.glyphMap; label: string; href: string }[] = [
-    { icon: 'home', label: 'Home', href: '/' },
+    { icon: 'home', label: 'Home', href: '/dashboard' },
     { icon: 'swap-horizontal', label: 'Transfer', href: '/transfer' },
     { icon: 'business', label: 'Bond', href: '/bond' },
     { icon: 'person', label: 'Profile', href: '/profile' },
@@ -99,20 +99,29 @@ export function QuickNavBar() {
 
   return (
     <XStack 
-      backgroundColor="$card"
+      backgroundColor="white"
       borderTopWidth={1}
-      borderTopColor="$border"
-      paddingVertical="$2"
+      borderTopColor="#e0e0e0"
+      paddingVertical="$3"
+      paddingBottom="$4"
       justifyContent="space-around"
+      position="absolute"
+      bottom={0}
+      left={0}
+      right={0}
+      shadowColor="rgba(0,0,0,0.1)"
+      shadowRadius={8}
+      shadowOffset={{ width: 0, height: -2 }}
+      elevationAndroid={5}
     >
       {items.map((item) => (
         <TouchableOpacity 
           key={item.href} 
           onPress={() => router.push(item.href as any)}
-          style={{ alignItems: 'center', paddingVertical: 8, paddingHorizontal: 16 }}
+          style={{ alignItems: 'center', paddingVertical: 4, paddingHorizontal: 12 }}
         >
-          <Ionicons name={item.icon} size={22} color="#0A5C3B" />
-          <Text fontSize="$2" color="$muted" marginTop="$1">{item.label}</Text>
+          <Ionicons name={item.icon} size={24} color="#0A5C3B" />
+          <Text fontSize={11} color="#666" marginTop="$1" fontFamily="Poppins_400Regular">{item.label}</Text>
         </TouchableOpacity>
       ))}
     </XStack>

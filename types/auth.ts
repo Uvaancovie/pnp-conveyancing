@@ -1,11 +1,17 @@
 export type UserRole = 'customer' | 'agent' | 'admin';
 
+export type AccountStatus = 'active' | 'deactivated';
+
 export interface User {
   uid: string;
   email: string;
   displayName: string;
+  username?: string;
+  firstName?: string;
+  surname?: string;
   role: UserRole;
   phoneNumber?: string;
+  status?: AccountStatus;
   createdAt: Date;
   lastLogin: Date;
 }
@@ -17,6 +23,15 @@ export interface AuthContextType {
   register: (email: string, password: string, displayName: string, role: UserRole, phoneNumber?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (displayName: string, phoneNumber?: string) => Promise<void>;
+  updateAccountDetails: (details: {
+    username?: string;
+    firstName?: string;
+    surname?: string;
+    displayName?: string;
+    phoneNumber?: string;
+  }) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  deactivateAccount: () => Promise<void>;
   updateRole: (newRole: UserRole) => Promise<void>;
 }
 

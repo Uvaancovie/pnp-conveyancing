@@ -1,135 +1,113 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import { ScrollView, View } from 'react-native';
-import { Card, H2, Paragraph, Text, XStack, YStack } from 'tamagui';
-import { galleryImages } from '../assets/images';
-import { ImageGallery } from '../components/ImageGallery';
-import { useAuth } from '../contexts/auth-context';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Image } from 'react-native';
+import { Button, Text, View, YStack } from 'tamagui';
 
-function NavCard({ title, subtitle, href, icon }: { title: string; subtitle?: string; href: string; icon: keyof typeof Ionicons.glyphMap }){
+export default function WelcomeScreen() {
+  const router = useRouter();
+
   return (
-    <Link href={href} asChild>
-      <XStack 
-        backgroundColor="$card" 
-        borderRadius="$4" 
-        padding="$4" 
-        borderWidth={1} 
-        borderColor="$border" 
-        shadowColor="rgba(0,0,0,0.06)" 
-        shadowRadius={8} 
-        marginBottom="$3"
-        pressStyle={{ opacity: 0.9, scale: 0.98 }}
-        hoverStyle={{ borderColor: '$brand' }}
-        animation="quick"
-        alignItems="center"
-        gap="$3"
-      >
-        <View style={{ 
-          width: 44, 
-          height: 44, 
-          borderRadius: 22, 
-          backgroundColor: 'rgba(10,92,59,0.1)',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Ionicons name={icon} size={22} color="#0A5C3B" />
-        </View>
-        <YStack flex={1}>
-          <Text fontWeight="700" fontSize="$4" color="$color">{title}</Text>
-          {subtitle ? <Text color="$muted" fontSize="$3">{subtitle}</Text> : null}
+    <View flex={1} backgroundColor="#0A5C3B" paddingHorizontal="$5" justifyContent="space-between">
+      <StatusBar style="light" />
+      
+      {/* Top Text */}
+      <YStack marginTop="$12" alignItems="center">
+        <Text 
+          color="white" 
+          fontSize={16} 
+          fontWeight="400" 
+          letterSpacing={0.5}
+          fontFamily="Poppins_400Regular"
+        >
+          Real People · Real Solutions
+        </Text>
+      </YStack>
+
+      {/* Center Logo Area */}
+      <YStack alignItems="center" justifyContent="center" flex={1}>
+        <Image 
+          source={require('../assets/logo.png')}
+          style={{ width: 280, height: 280 }}
+          resizeMode="contain"
+        />
+        <YStack marginTop="$4" alignItems="center" gap="$1">
+          <Text 
+            color="white" 
+            fontSize={24} 
+            fontWeight="700" 
+            letterSpacing={1}
+            textAlign="center"
+            fontFamily="Poppins_700Bold"
+          >
+            PATHER & PATHER
+          </Text>
+          <Text 
+            color="white" 
+            fontSize={13} 
+            fontWeight="400" 
+            letterSpacing={0.8}
+            textAlign="center"
+            opacity={0.9}
+            fontFamily="Poppins_400Regular"
+          >
+            ATTORNEYS, NOTARIES & CONVEYANCERS
+          </Text>
         </YStack>
-        <Ionicons name="chevron-forward" size={20} color="#0A5C3B" />
-      </XStack>
-    </Link>
-  );
-}
+      </YStack>
 
-function ServicesCard({ service }: { service: string }){
-  return (
-    <Card backgroundColor="$background" borderRadius="$4" padding="$3" marginBottom="$2" borderWidth={1} borderColor="$border" hoverStyle={{ borderColor: '$brand' }}>
-      <Text fontSize="$4" color="$color">{service}</Text>
-    </Card>
-  );
-}
+      {/* Bottom Actions */}
+      <YStack gap="$3" marginBottom="$10" width="100%" alignItems="center">
+        <Button 
+          backgroundColor="white" 
+          width="100%" 
+          maxWidth={400}
+          height={56}
+          borderRadius={12}
+          onPress={() => router.push('/(auth)/login')}
+          pressStyle={{ opacity: 0.9, scale: 0.98 }}
+          hoverStyle={{ opacity: 0.95 }}
+          shadowColor="rgba(0,0,0,0.15)"
+          shadowRadius={8}
+          shadowOffset={{ width: 0, height: 4 }}
+          elevationAndroid={3}
+        >
+          <Text 
+            color="#0A5C3B" 
+            fontWeight="600" 
+            fontSize={16} 
+            letterSpacing={0.5}
+            fontFamily="Poppins_600SemiBold"
+          >
+            SIGN IN
+          </Text>
+        </Button>
 
-export default function Home(){
-  const { user } = useAuth();
+        <Text 
+          color="white" 
+          textDecorationLine="underline" 
+          onPress={() => router.replace('/dashboard')}
+          fontSize={14}
+          opacity={0.9}
+          fontFamily="Poppins_400Regular"
+          pressStyle={{ opacity: 0.7 }}
+        >
+          Continue as guest
+        </Text>
+      </YStack>
 
-  return (
-    <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 60 }}>
-      {/* Hero Section */}
-      <ImageGallery 
-        images={galleryImages}
-        title="Pather & Pather"
-        subtitle="Conveyancing Companion"
-        height={340}
-        autoPlayInterval={3500}
-        showIndicators={true}
-      />
-      
-      {/* Quick Actions */}
-      <YStack marginBottom="$5">
-        <H2 fontSize="$5" color="$brand" marginBottom="$3">Calculators</H2>
-        <NavCard title="Transfer Costs" subtitle="Duty + attorney + disbursements" href="/transfer" icon="swap-horizontal" />
-        <NavCard title="Bond Costs" subtitle="Attorney + disbursements" href="/bond" icon="business" />
-        <NavCard title="Repayments" subtitle="Monthly payments & totals" href="/repayment" icon="calculator" />
+      {/* Footer */}
+      <YStack marginBottom="$5" alignItems="center">
+        <Text 
+          color="white" 
+          fontSize={11} 
+          opacity={0.75} 
+          textAlign="center"
+          fontFamily="Poppins_400Regular"
+          letterSpacing={0.3}
+        >
+          Durban | Pietermaritzburg | Johannesburg | Pretoria | Cape Town
+        </Text>
       </YStack>
-      
-      {/* Start Transfer */}
-      <YStack marginBottom="$5">
-        <H2 fontSize="$5" color="$brand" marginBottom="$3">Get Started</H2>
-        <NavCard title="Start My Transfer" subtitle="Send details via WhatsApp" href="/start" icon="rocket" />
-      </YStack>
-      
-      {/* Account */}
-      <YStack marginBottom="$5">
-        <H2 fontSize="$5" color="$brand" marginBottom="$3">Account</H2>
-        {!user ? (
-          <>
-            <NavCard title="Sign In" subtitle="Access your account" href="/login" icon="log-in" />
-            <NavCard title="Create Account" subtitle="Save your calculations" href="/signup" icon="person-add" />
-          </>
-        ) : (
-          <>
-            <NavCard title="My Profile" subtitle="View saved calculations" href="/profile" icon="person-circle" />
-            {user.role === 'admin' && (
-              <NavCard title="Admin Dashboard" subtitle="Manage users and leads" href="/admin" icon="shield-checkmark" />
-            )}
-          </>
-        )}
-      </YStack>
-      
-      {/* FAQ Section */}
-      <YStack marginBottom="$5">
-        <H2 fontSize="$5" color="$brand" marginBottom="$3">Frequently Asked Questions</H2>
-        
-        <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
-          <Text fontWeight="700" fontSize="$4" marginBottom="$2" color="$brand">What services do you provide?</Text>
-          <Paragraph fontSize="$3" lineHeight="$5" color="$muted">
-            Property conveyancing including transfers, mortgage bonds, sectional title schemes, and commercial property transactions.
-          </Paragraph>
-        </Card>
-        
-        <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
-          <Text fontWeight="700" fontSize="$4" marginBottom="$2" color="$brand">Where are you located?</Text>
-          <Paragraph fontSize="$3" lineHeight="$5" color="$muted">
-            Our office is in Umhlanga, serving clients nationally across South Africa.
-          </Paragraph>
-        </Card>
-        
-        <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
-          <Text fontWeight="700" fontSize="$4" marginBottom="$2" color="$brand">How do you ensure fast processing?</Text>
-          <Paragraph fontSize="$3" lineHeight="$5" color="$muted">
-            Modern technology, daily couriers, and electronic search facilities minimize delays.
-          </Paragraph>
-        </Card>
-      </YStack>
-      
-      {/* Other Links */}
-      <YStack>
-        <H2 fontSize="$5" color="$brand" marginBottom="$3">More</H2>
-        <NavCard title="Legal & Disclaimer" href="/legal" icon="document-text" />
-      </YStack>
-    </ScrollView>
+    </View>
   );
 }

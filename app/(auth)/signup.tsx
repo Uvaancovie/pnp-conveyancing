@@ -2,15 +2,15 @@ import { Link, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Alert, ScrollView } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
-import { heroImages } from '../assets/images';
-import { BtnText, Button } from '../components/Button';
-import { Card } from '../components/Card';
-import { Field } from '../components/Field';
-import { HeroImage } from '../components/HeroImage';
-import { useAuth } from '../contexts/auth-context';
-import { UserRole } from '../types/auth';
+import { heroImages } from '../../assets/images';
+import { BtnText, Button } from '../../components/Button';
+import { Card } from '../../components/Card';
+import { Field } from '../../components/Field';
+import { HeroImage } from '../../components/HeroImage';
+import { useAuth } from '../../contexts/auth-context';
+import { UserRole } from '../../types/auth';
 
-export default function SignUp(){
+export default function SignUp() {
   const router = useRouter();
   const { register } = useAuth();
   const [email, setEmail] = useState('');
@@ -19,7 +19,10 @@ export default function SignUp(){
   const [roleChoice, setRoleChoice] = useState<'homeowner' | 'realtor'>('homeowner');
   const [loading, setLoading] = useState(false);
 
-  const role: UserRole = useMemo(() => (roleChoice === 'realtor' ? 'agent' : 'customer'), [roleChoice]);
+  const role: UserRole = useMemo(
+    () => (roleChoice === 'realtor' ? 'agent' : 'customer'),
+    [roleChoice]
+  );
 
   async function submit() {
     if (!email || !password) return Alert.alert('Missing info', 'Provide email and password');
@@ -43,7 +46,7 @@ export default function SignUp(){
         height={180}
         overlayOpacity={0.55}
       />
-      
+
       <Card>
         <YStack gap="$3">
           <YStack gap="$2">
@@ -51,7 +54,7 @@ export default function SignUp(){
             <XStack gap="$2">
               <Button
                 flex={1}
-                variant={roleChoice === 'homeowner' ? 'primary' : 'secondary'}
+                variant={roleChoice === 'homeowner' ? undefined : 'secondary'}
                 onPress={() => setRoleChoice('homeowner')}
                 opacity={loading ? 0.7 : 1}
               >
@@ -59,7 +62,7 @@ export default function SignUp(){
               </Button>
               <Button
                 flex={1}
-                variant={roleChoice === 'realtor' ? 'primary' : 'secondary'}
+                variant={roleChoice === 'realtor' ? undefined : 'secondary'}
                 onPress={() => setRoleChoice('realtor')}
                 opacity={loading ? 0.7 : 1}
               >
@@ -67,6 +70,7 @@ export default function SignUp(){
               </Button>
             </XStack>
           </YStack>
+
           <Field label="Display Name" value={name} onChangeText={setName} placeholder="Your name" />
           <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" placeholder="email@example.com" />
           <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry placeholder="Choose a strong password" />
@@ -75,7 +79,7 @@ export default function SignUp(){
           </Button>
         </YStack>
       </Card>
-      
+
       <YStack alignItems="center" marginTop="$4" gap="$2">
         <Text color="$muted">Already have an account?</Text>
         <Link href="/login" asChild>
