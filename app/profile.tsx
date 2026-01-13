@@ -1,7 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Text as TText, XStack, YStack } from 'tamagui';
 import { heroImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
@@ -10,13 +13,14 @@ import { ConfirmActionModal } from '../components/ConfirmActionModal';
 import { Field } from '../components/Field';
 import { HeroImage } from '../components/HeroImage';
 import { QuickNavBar } from '../components/Navigation';
+import theme from '../config/theme.json';
 import { useAuth } from '../contexts/auth-context';
-import { formatZAR } from '../lib/money';
 import { fetchMyCalculations } from '../utils/firebase';
 
 export default function Profile(){
   const router = useRouter();
   const { user, logout, updateAccountDetails, changePassword, deactivateAccount } = useAuth();
+  const { width: windowWidth } = useWindowDimensions();
   const [calcs, setCalcs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +38,20 @@ export default function Profile(){
   const [confirmDeactivateVisible, setConfirmDeactivateVisible] = useState(false);
 
   const roleLabel = user?.role === 'admin' ? 'Admin' : user?.role === 'agent' ? 'Realtor' : 'Homeowner';
+
+  const openWhatsApp = () => {
+    const msg =
+      `Hi Pather & Pather, I'd like to chat to a conveyancer.\n` +
+      (user?.displayName ? `Name: ${user.displayName}\n` : '') +
+      (user?.email ? `Email: ${user.email}\n` : '');
+    const url = `https://wa.me/${theme.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+
+    if (Platform.OS === 'web') {
+      window.open(url, '_blank');
+    } else {
+      Linking.openURL(url);
+    }
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -87,14 +105,81 @@ export default function Profile(){
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        {/* Welcome Header */}
-        <YStack marginBottom="$4" paddingTop="$2">
-          <TText fontSize={28} fontWeight="700" color="$brand" fontFamily="Poppins_700Bold">
-            My Profile
-          </TText>
-          <TText fontSize={16} color="$muted" marginTop="$1" fontFamily="Poppins_400Regular">
-            {user.displayName || user.email?.split('@')[0] || 'User'} • {roleLabel}
-          </TText>
+        <View
+          style={{
+            height: windowWidth < 480 ? 200 : 220,
+            borderRadius: 16,
+            overflow: 'hidden',
+            justifyContent: 'flex-end',
+            marginBottom: 16,
+            shadowColor: 'rgba(0,0,0,0.15)',
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 6 },
+            elevation: 3,
+          }}
+        >
+          <Image
+            source={require('../assets/images/profile/my-profile-banner.jpg')}
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+            contentFit="cover"
+            contentPosition="center"
+          />
+
+          <LinearGradient
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.14)', 'rgba(0,0,0,0.45)']}
+            locations={[0, 0.55, 1]}
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+            pointerEvents="none"
+          />
+
+          <YStack paddingHorizontal={14} paddingBottom={14} gap="$2">
+            <YStack
+              alignSelf="flex-start"
+              backgroundColor="rgba(255,255,255,0.18)"
+              borderColor="rgba(255,255,255,0.22)"
+              borderWidth={1}
+              paddingHorizontal={10}
+              paddingVertical={6}
+              borderRadius={999}
+            >
+              <TText color="#FFFFFF" fontSize={12} fontWeight="700">
+                My Profile
+              </TText>
+            </YStack>
+
+            <TText
+              style={{
+                fontSize: 20,
+                fontWeight: '800',
+                color: '#FFFFFF',
+                textShadowColor: 'rgba(0,0,0,0.35)',
+                textShadowOffset: { width: 0, height: 2 },
+                textShadowRadius: 6,
+              }}
+            >
+              {user.displayName || user.email?.split('@')[0] || 'User'}
+            </TText>
+
+            <TText style={{ fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.92)' }}>
+              {roleLabel}
+            </TText>
+          </YStack>
+        </View>
+
+        <YStack gap="$3" marginBottom={16}>
+          <Button backgroundColor="#25D366" borderColor="#25D366" onPress={openWhatsApp}>
+            <XStack gap="$2" alignItems="center" justifyContent="center">
+              <Ionicons name="logo-whatsapp" size={20} color="white" />
+              <BtnText>Chat to a Conveyancer</BtnText>
+            </XStack>
+          </Button>
+
+          <Button backgroundColor="#000" borderColor="#000" onPress={() => router.push('/services')}>
+            <XStack gap="$2" alignItems="center" justifyContent="center">
+              <Ionicons name="grid-outline" size={18} color="white" />
+              <BtnText>View Other Services</BtnText>
+            </XStack>
+          </Button>
         </YStack>
 
         {/* User Info Card */}
@@ -123,6 +208,20 @@ export default function Profile(){
               </XStack>
             </YStack>
           </XStack>
+        </Card>
+
+        <Card title="Saved Calculations" subtitle="View and filter your saved calculator results">
+          <YStack gap="$3" marginTop="$2">
+            <Button
+              onPress={() => router.push('/calculations')}
+              opacity={loading ? 0.7 : 1}
+            >
+              <XStack gap="$2" alignItems="center" justifyContent="center">
+                <Ionicons name="calculator-outline" size={18} color="white" />
+                <BtnText>{loading ? 'Loading…' : 'View Saved Calculations'}</BtnText>
+              </XStack>
+            </Button>
+          </YStack>
         </Card>
 
         {/* Account Details */}
@@ -278,103 +377,6 @@ export default function Profile(){
             </Button>
           </YStack>
         </Card>
-
-        {/* Saved Calculations Section */}
-        <YStack marginTop="$4">
-          <TText fontSize={20} fontWeight="700" color="$brand" marginBottom="$3" fontFamily="Poppins_700Bold">
-            Saved Calculations
-          </TText>
-          {loading ? (
-            <ActivityIndicator size="small" style={{ padding: 20 }} />
-          ) : calcs.length === 0 ? (
-            <Card>
-              <YStack padding="$4" alignItems="center" gap="$3">
-                <Ionicons name="calculator-outline" size={64} color="#ccc" />
-                <TText color="$muted" textAlign="center" fontSize={16} fontWeight="600">No saved calculations yet</TText>
-                <TText color="$muted" fontSize="$3" textAlign="center">Use our calculators and tap "Save to Profile" to keep a record.</TText>
-              </YStack>
-            </Card>
-          ) : (
-            calcs.map(c => (
-              <YStack key={c.id} marginBottom="$3">
-                <Card>
-                <YStack padding="$3" gap="$3">
-                  <XStack justifyContent="space-between" alignItems="flex-start">
-                    <YStack flex={1}>
-                      <View style={{ 
-                        backgroundColor: c.type === 'transfer' ? '#E3F2FD' : c.type === 'bond' ? '#FFF3E0' : '#F3E5F5',
-                        paddingHorizontal: 10,
-                        paddingVertical: 5,
-                        borderRadius: 8,
-                        alignSelf: 'flex-start',
-                        marginBottom: 8
-                      }}>
-                        <TText fontSize={12} fontWeight="700" style={{ textTransform: 'uppercase', color: '#0A5C3B' }}>
-                          {c.type}
-                        </TText>
-                      </View>
-                      {c.name && (
-                        <TText fontWeight="700" fontSize={18} color="$color">{c.name}</TText>
-                      )}
-                    </YStack>
-                    <TText fontSize={12} color="$muted">
-                      {c.createdAt?.seconds ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
-                    </TText>
-                  </XStack>
-
-                  <View style={{ backgroundColor: '#F9F9F9', padding: 12, borderRadius: 8 }}>
-                    <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">Key Details</TText>
-                    {Object.entries(c.inputs || {}).slice(0, 3).map(([k, v]) => (
-                      <XStack key={k} justifyContent="space-between" marginBottom="$1">
-                        <TText fontSize={13} color="$muted" style={{ textTransform: 'capitalize' }}>{k.replace(/([A-Z])/g, ' $1').trim()}</TText>
-                        <TText fontSize={13} fontWeight="600" color="$color">
-                          {typeof v === 'number' ? formatZAR(v) : String(v)}
-                        </TText>
-                      </XStack>
-                    ))}
-                  </View>
-
-                  {c.result && Object.keys(c.result).length > 0 && (
-                    <View style={{ backgroundColor: '#E8F5E9', padding: 12, borderRadius: 8 }}>
-                      <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">Results</TText>
-                      {Object.entries(c.result).slice(0, 2).map(([k, v]) => (
-                        <XStack key={k} justifyContent="space-between" marginBottom="$1">
-                          <TText fontSize={13} color="$muted" style={{ textTransform: 'capitalize' }}>{k.replace(/([A-Z])/g, ' $1').trim()}</TText>
-                          <TText fontSize={14} fontWeight="700" color="$brand">
-                            {typeof v === 'number' ? formatZAR(v) : String(v)}
-                          </TText>
-                        </XStack>
-                      ))}
-                    </View>
-                  )}
-
-                  {c.pdfUrl && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        import('expo-web-browser').then(WebBrowser => {
-                          WebBrowser.openBrowserAsync(c.pdfUrl);
-                        });
-                      }}
-                      style={{ 
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 6,
-                        backgroundColor: '#0A5C3B',
-                        paddingVertical: 10,
-                        borderRadius: 8
-                      }}
-                    >
-                      <Ionicons name="document-text" size={18} color="white" />
-                      <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>View PDF</Text>
-                    </TouchableOpacity>
-                  )}
-                </YStack>
-              </Card>
-              </YStack>
-            ))
-          )}
-        </YStack>
 
         <Button 
           marginTop="$4"

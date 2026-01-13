@@ -130,8 +130,22 @@ export default function Repayment(){
           <BtnText>Save to Profile</BtnText>
         </Button>
 
-        <Button variant="outline" onPress={() => router.push('/profile')}>
-            <BtnText color="$brand">View My Profile</BtnText>
+        <Button
+          variant="outline"
+          borderColor="#9CA3AF"
+          hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
+          onPress={() => router.push('/profile')}
+        >
+          <BtnText color="#6B7280">View My Profile</BtnText>
+        </Button>
+
+        <Button
+          backgroundColor="#000"
+          borderColor="#000"
+          hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
+          onPress={() => router.push('/services')}
+        >
+          <BtnText>View Other Services</BtnText>
         </Button>
         
         <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Related Calculators</Text>
@@ -155,13 +169,13 @@ export default function Repayment(){
       <ConfirmActionModal
         visible={savedPromptVisible}
         title="Saved"
-        message="Calculation saved successfully! Would you like to view your profile?"
-        confirmText="View Profile"
+        message="Calculation saved successfully! Would you like to view your saved calculations?"
+        confirmText="View Saved"
         cancelText="Stay Here"
         onCancel={() => setSavedPromptVisible(false)}
         onConfirm={() => {
           setSavedPromptVisible(false);
-          router.push('/profile');
+          router.push('/calculations');
         }}
       />
     </ScrollView>

@@ -1,12 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollView, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { Paragraph, Text, XStack, YStack } from 'tamagui';
-import { heroImages } from '../assets/images';
+import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
-import { HeroImage } from '../components/HeroImage';
 import { QuickNavBar } from '../components/Navigation';
+import theme from '../config/theme.json';
 
 type FaqItem = {
   id: string;
@@ -17,6 +20,18 @@ type FaqItem = {
 export default function FAQScreen() {
   const router = useRouter();
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
+  const { width: windowWidth } = useWindowDimensions();
+
+  const openWhatsApp = () => {
+    const msg = 'Hi Pather & Pather, I have a question about conveyancing.';
+    const url = `https://wa.me/${theme.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+
+    if (Platform.OS === 'web') {
+      window.open(url, '_blank');
+    } else {
+      Linking.openURL(url);
+    }
+  };
 
   const faqs: FaqItem[] = useMemo(
     () => [
@@ -75,13 +90,90 @@ export default function FAQScreen() {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <HeroImage
-          source={heroImages.info}
-          title="FAQs"
-          subtitle="Frequently Asked Questions"
-          height={180}
-          overlayOpacity={0.55}
-        />
+        <View
+          style={{
+            height: windowWidth < 480 ? 220 : 240,
+            borderRadius: 16,
+            overflow: 'hidden',
+            justifyContent: 'flex-end',
+            marginBottom: 16,
+            shadowColor: 'rgba(0,0,0,0.15)',
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 6 },
+            elevation: 3,
+          }}
+        >
+          <Image
+            source={require('../assets/images/faq/faq-banner.jpeg')}
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+            contentFit="cover"
+            contentPosition="center"
+          />
+
+          {/* Bottom-only gradient so the books stay clear */}
+          <LinearGradient
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.14)', 'rgba(0,0,0,0.45)']}
+            locations={[0, 0.55, 1]}
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+            pointerEvents="none"
+          />
+
+          <YStack paddingHorizontal={14} paddingBottom={14} gap="$2">
+            <YStack
+              alignSelf="flex-start"
+              backgroundColor="rgba(255,255,255,0.18)"
+              borderColor="rgba(255,255,255,0.22)"
+              borderWidth={1}
+              paddingHorizontal={10}
+              paddingVertical={6}
+              borderRadius={999}
+            >
+              <Text color="#FFFFFF" fontSize={12} fontWeight="700">
+                Conveyancing FAQs
+              </Text>
+            </YStack>
+
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: '800',
+                color: '#FFFFFF',
+                textShadowColor: 'rgba(0,0,0,0.35)',
+                textShadowOffset: { width: 0, height: 2 },
+                textShadowRadius: 6,
+              }}
+            >
+              Frequently Asked Questions
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: 'rgba(255,255,255,0.92)',
+              }}
+            >
+              Real People · Real Solutions
+            </Text>
+          </YStack>
+        </View>
+
+        <YStack gap="$3" marginBottom={16}>
+          <Button backgroundColor="#25D366" borderColor="#25D366" onPress={openWhatsApp}>
+            <XStack gap="$2" alignItems="center" justifyContent="center">
+              <Ionicons name="logo-whatsapp" size={20} color="white" />
+              <BtnText>Chat to a Conveyancer</BtnText>
+            </XStack>
+          </Button>
+
+          <Button backgroundColor="#000" borderColor="#000" onPress={() => router.push('/services')}>
+            <XStack gap="$2" alignItems="center" justifyContent="center">
+              <Ionicons name="grid-outline" size={18} color="white" />
+              <BtnText>View Other Services</BtnText>
+            </XStack>
+          </Button>
+        </YStack>
+
 
         <Card>
           <XStack alignItems="center" justifyContent="space-between">

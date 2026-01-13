@@ -119,8 +119,9 @@ export default function Transfer(){
         overlayOpacity={0.6}
       />
       
-      <Card subtitle="Quotation values subject to change.">
-        <Field label="Purchase Price (R)" keyboardType="numeric" value={price} onChangeText={setPrice} placeholder="2 000 000" />
+      <Card subtitle="">
+        <Field label="" keyboardType="numeric" value={price} onChangeText={setPrice} placeholder="" />
+        <Text color="#9CA3AF" fontSize="$2" marginTop="$2">Quotation Values subject to change</Text>
       </Card>
       <Card title="Results">
         <ResultRow label="Transfer Attorney Fees" value={formatZAR(atty)} />
@@ -150,8 +151,22 @@ export default function Transfer(){
           <BtnText>Save to Profile</BtnText>
         </Button>
 
-        <Button variant="outline" onPress={() => router.push('/profile')}>
-            <BtnText color="$brand">View My Profile</BtnText>
+        <Button
+          variant="outline"
+          borderColor="#9CA3AF"
+          hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
+          onPress={() => router.push('/profile')}
+        >
+          <BtnText color="#6B7280">View My Profile</BtnText>
+        </Button>
+
+        <Button
+          backgroundColor="#000"
+          borderColor="#000"
+          hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
+          onPress={() => router.push('/services')}
+        >
+          <BtnText>View Other Services</BtnText>
         </Button>
         
         <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Related Calculators</Text>
@@ -175,13 +190,13 @@ export default function Transfer(){
       <ConfirmActionModal
         visible={savedPromptVisible}
         title="Saved"
-        message="Calculation saved successfully! Would you like to view your profile?"
-        confirmText="View Profile"
+        message="Calculation saved successfully! Would you like to view your saved calculations?"
+        confirmText="View Saved"
         cancelText="Stay Here"
         onCancel={() => setSavedPromptVisible(false)}
         onConfirm={() => {
           setSavedPromptVisible(false);
-          router.push('/profile');
+          router.push('/calculations');
         }}
       />
     </ScrollView>
