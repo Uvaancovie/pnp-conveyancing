@@ -110,7 +110,7 @@ export default function Bond(){
         title="Bond Costs"
         subtitle="Calculate your bond registration fees"
         height={160}
-        overlayOpacity={0.6}
+        overlayOpacity={0}
       />
       
       <Card subtitle="Quotation values subject to change.">

@@ -116,7 +116,7 @@ export default function Transfer(){
         title="Transfer Costs"
         subtitle="Calculate your property transfer fees"
         height={160}
-        overlayOpacity={0.6}
+        overlayOpacity={0}
       />
       
       <Card subtitle="">

@@ -100,7 +100,7 @@ export default function Repayment(){
         title="Repayments"
         subtitle="Calculate monthly payments & totals"
         height={160}
-        overlayOpacity={0.55}
+        overlayOpacity={0}
       />
       
       <Card>
