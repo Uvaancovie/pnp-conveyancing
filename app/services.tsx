@@ -134,12 +134,12 @@ export default function ServicesScreen() {
             pointerEvents="none"
           />
 
-          {/* PnP logo bottom-left */}
+          {/* PnP logo bottom-right */}
           <Image
             source={require('../assets/images/dashboard-banner-logo/dashboard-logo-banner.png')}
-            style={{ position: 'absolute', left: 12, bottom: 12, width: 90, height: 34 }}
+            style={{ position: 'absolute', right: 12, bottom: 12, width: 90, height: 34 }}
             contentFit="contain"
-            contentPosition="left"
+            contentPosition="right"
           />
 
           <YStack paddingHorizontal={14} paddingBottom={14} gap="$2">
