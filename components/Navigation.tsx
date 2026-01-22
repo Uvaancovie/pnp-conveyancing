@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { TouchableOpacity, View } from 'react-native';
+import { Linking, Platform, TouchableOpacity, View } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
+import theme from '../config/theme.json';
 
 type Props = {
   title: string;
@@ -90,12 +91,27 @@ export function NavButton({
 export function QuickNavBar() {
   const router = useRouter();
   
-  const items: { icon: keyof typeof Ionicons.glyphMap; label: string; href: string }[] = [
+  const items: { icon: keyof typeof Ionicons.glyphMap; label: string; href: string; isExternal?: boolean }[] = [
     { icon: 'home', label: 'Home', href: '/dashboard' },
-    { icon: 'swap-horizontal', label: 'Transfer', href: '/transfer' },
-    { icon: 'business', label: 'Bond', href: '/bond' },
+    { icon: 'logo-whatsapp', label: 'WhatsApp', href: `https://wa.me/${theme.whatsappNumber}`, isExternal: true },
+    { icon: 'briefcase', label: 'Services', href: '/services' },
     { icon: 'person', label: 'Profile', href: '/profile' },
   ];
+
+  const handlePress = (item: typeof items[0]) => {
+    if (item.isExternal) {
+      const msg = 'Hi Pather & Pather, I have a question.';
+      const url = `https://wa.me/${theme.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+      
+      if (Platform.OS === 'web') {
+        window.open(url, '_blank');
+      } else {
+        Linking.openURL(url);
+      }
+    } else {
+      router.push(item.href as any);
+    }
+  };
 
   return (
     <XStack 
@@ -117,7 +133,7 @@ export function QuickNavBar() {
       {items.map((item) => (
         <TouchableOpacity 
           key={item.href} 
-          onPress={() => router.push(item.href as any)}
+          onPress={() => handlePress(item)}
           style={{ alignItems: 'center', paddingVertical: 4, paddingHorizontal: 12 }}
         >
           <Ionicons name={item.icon} size={24} color="#0A5C3B" />

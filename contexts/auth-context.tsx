@@ -16,7 +16,7 @@ import {
 import { doc, getDoc, getFirestore, serverTimestamp, setDoc, type Firestore } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
-import { AccountStatus, AuthContextType, User, UserRole } from '../types/auth';
+import { AccountStatus, AuthContextType, User, UserRole, UserType } from '../types/auth';
 
 // Initialize Firebase directly in this file to avoid module loading issues
 const firebaseConfig = {
@@ -130,6 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 firstName: userData.firstName || derivedParts.firstName,
                 surname: userData.surname || derivedParts.surname,
                 role: (userData.role as UserRole) || ('customer' as UserRole),
+                userType: userData.userType as UserType | undefined,
                 phoneNumber: userData.phoneNumber,
                 status,
                 createdAt: userData.createdAt?.toDate() || new Date(),
@@ -159,6 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 firstName: derivedParts.firstName,
                 surname: derivedParts.surname,
                 role: 'customer' as UserRole,
+                userType: undefined,
                 status: 'active',
                 createdAt: new Date(),
                 lastLogin: new Date(),
@@ -178,6 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               firstName: derivedParts.firstName,
               surname: derivedParts.surname,
               role: 'customer' as UserRole, // Default to customer
+              userType: undefined,
               status: 'active',
               createdAt: new Date(),
               lastLogin: new Date(),
@@ -243,7 +246,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string, 
     displayName: string, 
     role: UserRole,
-    phoneNumber?: string
+    phoneNumber?: string,
+    userType?: UserType
   ) => {
     if (!firebaseAuth || !db) throw new Error('Auth or DB not initialized');
     try {
@@ -265,6 +269,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           firstName: derivedParts.firstName || '',
           surname: derivedParts.surname || '',
           role,
+          userType: userType || undefined,
           phoneNumber: phoneNumber || '',
           createdAt: new Date(),
           lastLogin: new Date(),

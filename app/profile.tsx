@@ -37,7 +37,17 @@ export default function Profile(){
 
   const [confirmDeactivateVisible, setConfirmDeactivateVisible] = useState(false);
 
-  const roleLabel = user?.role === 'admin' ? 'Admin' : user?.role === 'agent' ? 'Realtor' : 'Homeowner';
+  const getRoleLabel = (user: typeof user) => {
+    if (!user) return 'Homeowner';
+    if (user.role === 'admin') return 'Admin';
+    if (user.role === 'agent') {
+      if (user.userType === 'developer') return 'Developer';
+      return 'Estate Agent'; // Default for estate-agent or legacy
+    }
+    return 'Homeowner';
+  };
+
+  const roleLabel = getRoleLabel(user);
 
   const openWhatsApp = () => {
     const msg =

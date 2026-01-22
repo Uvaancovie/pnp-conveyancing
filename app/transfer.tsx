@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Platform, ScrollView } from 'react-native';
+import { Alert, Platform, ScrollView, View } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
 import { heroImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
@@ -8,6 +8,7 @@ import { Card } from '../components/Card';
 import { ConfirmActionModal } from '../components/ConfirmActionModal';
 import { Field } from '../components/Field';
 import { HeroImage } from '../components/HeroImage';
+import { QuickNavBar } from '../components/Navigation';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
 import { useAuth } from '../contexts/auth-context';
@@ -110,95 +111,98 @@ export default function Transfer(){
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <HeroImage 
-        source={heroImages.transfer}
-        title="Transfer Costs"
-        subtitle="Calculate your property transfer fees"
-        height={160}
-        overlayOpacity={0}
-      />
-      
-      <Card subtitle="">
-        <Field label="" keyboardType="numeric" value={price} onChangeText={setPrice} placeholder="" />
-        <Text color="#9CA3AF" fontSize="$2" marginTop="$2">Quotation Values subject to change</Text>
-      </Card>
-      <Card title="Results">
-        <ResultRow label="Transfer Attorney Fees" value={formatZAR(atty)} />
-        <ResultRow label="Postages & Petties" value={formatZAR(d.postage ?? 0)} />
-        <ResultRow label="Deeds Office Fees" value={formatZAR(deeds)} />
-        <ResultRow label="Electronic Generation Fee" value={formatZAR(d.electronicGen ?? 0)} />
-        <ResultRow label="FICA" value={formatZAR(d.fica ?? 0)} />
-        <ResultRow label="Deeds Office Searches" value={formatZAR(d.deedsSearch ?? 0)} />
-        <ResultRow label="Rates Clearance Fees" value={formatZAR(d.ratesClear ?? 0)} />
-        <ResultRow label="Transfer Duty" value={formatZAR(duty)} />
-        <ResultRow big label="Total Transfer Costs (incl. VAT)" value={formatZAR(total)} />
-      </Card>
-      <YStack gap="$3" marginTop="$4">
-        <XStack gap="$3">
-          <Button flex={1} onPress={handleExport}><BtnText>Export PDF / Share</BtnText></Button>
-        </XStack>
-
-        <Button
-          onPress={() => {
-            if (!canSave) {
-              router.push('/register');
-              return;
-            }
-            setModalVisible(true);
-          }}
-        >
-          <BtnText>Save to Profile</BtnText>
-        </Button>
-
-        <Button
-          variant="outline"
-          borderColor="#9CA3AF"
-          hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
-          onPress={() => router.push('/profile')}
-        >
-          <BtnText color="#6B7280">View My Profile</BtnText>
-        </Button>
-
-        <Button
-          backgroundColor="#000"
-          borderColor="#000"
-          hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
-          onPress={() => router.push('/services')}
-        >
-          <BtnText>View Other Services</BtnText>
-        </Button>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <HeroImage 
+          source={heroImages.transfer}
+          title="Transfer Costs"
+          subtitle="Calculate your property transfer fees"
+          height={160}
+          overlayOpacity={0}
+        />
         
-        <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Related Calculators</Text>
-        <XStack gap="$3" justifyContent="center">
-          <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/bond')}>
-            <BtnText>Bond Costs</BtnText>
-          </Button>
-          <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/repayment')}>
-            <BtnText>Repayments</BtnText>
-          </Button>
-        </XStack>
-      </YStack>
+        <Card subtitle="">
+          <Field label="" keyboardType="numeric" value={price} onChangeText={setPrice} placeholder="" />
+          <Text color="#9CA3AF" fontSize="$2" marginTop="$2">Quotation Values subject to change</Text>
+        </Card>
+        <Card title="Results">
+          <ResultRow label="Transfer Attorney Fees" value={formatZAR(atty)} />
+          <ResultRow label="Postages & Petties" value={formatZAR(d.postage ?? 0)} />
+          <ResultRow label="Deeds Office Fees" value={formatZAR(deeds)} />
+          <ResultRow label="Electronic Generation Fee" value={formatZAR(d.electronicGen ?? 0)} />
+          <ResultRow label="FICA" value={formatZAR(d.fica ?? 0)} />
+          <ResultRow label="Deeds Office Searches" value={formatZAR(d.deedsSearch ?? 0)} />
+          <ResultRow label="Rates Clearance Fees" value={formatZAR(d.ratesClear ?? 0)} />
+          <ResultRow label="Transfer Duty" value={formatZAR(duty)} />
+          <ResultRow big label="Total Transfer Costs (incl. VAT)" value={formatZAR(total)} />
+        </Card>
+        <YStack gap="$3" marginTop="$4">
+          <XStack gap="$3">
+            <Button flex={1} onPress={handleExport}><BtnText>Export PDF / Share</BtnText></Button>
+          </XStack>
 
-      <SaveCalculationModal 
-        visible={modalVisible} 
-        onClose={() => setModalVisible(false)} 
-        onSave={handleSave}
-        userRole={user?.role}
-      />
+          <Button
+            onPress={() => {
+              if (!canSave) {
+                router.push('/register');
+                return;
+              }
+              setModalVisible(true);
+            }}
+          >
+            <BtnText>Save to Profile</BtnText>
+          </Button>
 
-      <ConfirmActionModal
-        visible={savedPromptVisible}
-        title="Saved"
-        message="Calculation saved successfully! Would you like to view your saved calculations?"
-        confirmText="View Saved"
-        cancelText="Stay Here"
-        onCancel={() => setSavedPromptVisible(false)}
-        onConfirm={() => {
-          setSavedPromptVisible(false);
-          router.push('/calculations');
-        }}
-      />
-    </ScrollView>
+          <Button
+            variant="outline"
+            borderColor="#9CA3AF"
+            hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
+            onPress={() => router.push('/profile')}
+          >
+            <BtnText color="#6B7280">View My Profile</BtnText>
+          </Button>
+
+          <Button
+            backgroundColor="#000"
+            borderColor="#000"
+            hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
+            onPress={() => router.push('/services')}
+          >
+            <BtnText>View Other Services</BtnText>
+          </Button>
+          
+          <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Related Calculators</Text>
+          <XStack gap="$3" justifyContent="center">
+            <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/bond')}>
+              <BtnText>Bond Costs</BtnText>
+            </Button>
+            <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/repayment')}>
+              <BtnText>Repayments</BtnText>
+            </Button>
+          </XStack>
+        </YStack>
+
+        <SaveCalculationModal 
+          visible={modalVisible} 
+          onClose={() => setModalVisible(false)} 
+          onSave={handleSave}
+          userRole={user?.role}
+        />
+
+        <ConfirmActionModal
+          visible={savedPromptVisible}
+          title="Saved"
+          message="Calculation saved successfully! Would you like to view your saved calculations?"
+          confirmText="View Saved"
+          cancelText="Stay Here"
+          onCancel={() => setSavedPromptVisible(false)}
+          onConfirm={() => {
+            setSavedPromptVisible(false);
+            router.push('/calculations');
+          }}
+        />
+      </ScrollView>
+      <QuickNavBar />
+    </View>
   );
 }

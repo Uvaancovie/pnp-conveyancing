@@ -2,13 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Platform, ScrollView } from 'react-native';
+import { Alert, Platform, ScrollView, View } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
 import { galleryImages } from '../assets/images';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
 import { ImageGallery } from '../components/ImageGallery';
+import { QuickNavBar } from '../components/Navigation';
 import theme from '../config/theme.json';
 import { createLead } from '../utils/firebase';
 
@@ -65,44 +66,47 @@ export default function Start(){
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <ImageGallery 
-        images={galleryImages}
-        title="Start My Transfer"
-        subtitle="Fill in your details and we'll get in touch"
-        height={200}
-        autoPlayInterval={3500}
-        showIndicators={true}
-      />
-      
-      <Card>
-        <YStack gap="$3">
-          <Field label="Full Name" value={fullName} onChangeText={setFullName} placeholder="John Smith" />
-          <Field label="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="083 123 4567" />
-          <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" placeholder="email@example.com" />
-          <Field label="Suburb (optional)" value={suburb} onChangeText={setSuburb} placeholder="e.g. Umhlanga" />
-          <Field label="Purchase Price (optional)" value={price} onChangeText={setPrice} keyboardType="numeric" placeholder="2 000 000" />
-        </YStack>
-      </Card>
-      
-      <YStack gap="$3">
-        <Button onPress={submit} opacity={loading ? 0.7 : 1}>
-          <XStack alignItems="center" gap="$2">
-            <Ionicons name="logo-whatsapp" size={20} color="white" />
-            <BtnText>{loading ? 'Sending...' : 'Send via WhatsApp'}</BtnText>
-          </XStack>
-        </Button>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <ImageGallery 
+          images={galleryImages}
+          title="Start My Transfer"
+          subtitle="Fill in your details and we'll get in touch"
+          height={200}
+          autoPlayInterval={3500}
+          showIndicators={true}
+        />
         
-        <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Need to calculate costs first?</Text>
-        <XStack gap="$3" justifyContent="center">
-          <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/transfer')}>
-            <BtnText>Transfer Costs</BtnText>
+        <Card>
+          <YStack gap="$3">
+            <Field label="Full Name" value={fullName} onChangeText={setFullName} placeholder="John Smith" />
+            <Field label="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="083 123 4567" />
+            <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" placeholder="email@example.com" />
+            <Field label="Suburb (optional)" value={suburb} onChangeText={setSuburb} placeholder="e.g. Umhlanga" />
+            <Field label="Purchase Price (optional)" value={price} onChangeText={setPrice} keyboardType="numeric" placeholder="2 000 000" />
+          </YStack>
+        </Card>
+        
+        <YStack gap="$3">
+          <Button onPress={submit} opacity={loading ? 0.7 : 1}>
+            <XStack alignItems="center" gap="$2">
+              <Ionicons name="logo-whatsapp" size={20} color="white" />
+              <BtnText>{loading ? 'Sending...' : 'Send via WhatsApp'}</BtnText>
+            </XStack>
           </Button>
-          <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/bond')}>
-            <BtnText>Bond Costs</BtnText>
-          </Button>
-        </XStack>
-      </YStack>
-    </ScrollView>
+          
+          <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Need to calculate costs first?</Text>
+          <XStack gap="$3" justifyContent="center">
+            <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/transfer')}>
+              <BtnText>Transfer Costs</BtnText>
+            </Button>
+            <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/bond')}>
+              <BtnText>Bond Costs</BtnText>
+            </Button>
+          </XStack>
+        </YStack>
+      </ScrollView>
+      <QuickNavBar />
+    </View>
   );
 }

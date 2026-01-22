@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { QuickNavBar } from '../components/Navigation';
 
 const faqs = [
   {
@@ -35,25 +35,28 @@ export default function InfoScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#2C5530" />
-        </TouchableOpacity>
-        <Ionicons name="information-circle-outline" size={40} color="#2C5530" />
-        <Text style={styles.title}>Conveyancing Explained</Text>
-        <Text style={styles.subtitle}>Frequently Asked Questions</Text>
-      </View>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 100 }]}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color="#2C5530" />
+          </TouchableOpacity>
+          <Ionicons name="information-circle-outline" size={40} color="#2C5530" />
+          <Text style={styles.title}>Conveyancing Explained</Text>
+          <Text style={styles.subtitle}>Frequently Asked Questions</Text>
+        </View>
 
-      <View style={styles.faqList}>
-        {faqs.map((item, i) => (
-          <View key={i} style={styles.faqItem}>
-            <Text style={styles.question}>{item.question}</Text>
-            <Text style={styles.answer}>{item.answer}</Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+        <View style={styles.faqList}>
+          {faqs.map((item, i) => (
+            <View key={i} style={styles.faqItem}>
+              <Text style={styles.question}>{item.question}</Text>
+              <Text style={styles.answer}>{item.answer}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+      <QuickNavBar />
+    </View>
   );
 }
 

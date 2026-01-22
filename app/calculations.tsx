@@ -106,6 +106,7 @@ export default function CalculationsScreen() {
   const [priceMax, setPriceMax] = useState('');
   const [amountMin, setAmountMin] = useState('');
   const [amountMax, setAmountMax] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -162,6 +163,88 @@ export default function CalculationsScreen() {
     });
   }, [amountMax, amountMin, calcs, fromDate, month, priceMax, priceMin, toDate, type]);
 
+  const sortedAndRanked = useMemo(() => {
+    return [...filtered]
+      .map((calc) => {
+        const resultAmount = extractResultAmount(calc?.result);
+        return {
+          ...calc,
+          sortValue: resultAmount ?? 0,
+        };
+      })
+      .sort((a, b) => b.sortValue - a.sortValue) // Highest to lowest
+      .map((calc, index) => ({
+        ...calc,
+        rank: index + 1,
+      }));
+  }, [filtered]);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (type !== 'all') count++;
+    if (month) count++;
+    if (fromDate || toDate) count++;
+    if (priceMin || priceMax) count++;
+    if (amountMin || amountMax) count++;
+    return count;
+  }, [type, month, fromDate, toDate, priceMin, priceMax, amountMin, amountMax]);
+
+  const clearAllFilters = () => {
+    setType('all');
+    setMonth('');
+    setFromDate('');
+    setToDate('');
+    setPriceMin('');
+    setPriceMax('');
+    setAmountMin('');
+    setAmountMax('');
+  };
+
+  const setDatePreset = (preset: 'last7' | 'last30' | 'thisMonth' | 'lastMonth' | 'all') => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+
+    switch (preset) {
+      case 'last7': {
+        const from = new Date(today);
+        from.setDate(from.getDate() - 7);
+        setFromDate(`${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`);
+        setToDate(`${year}-${String(month + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+        setMonth('');
+        break;
+      }
+      case 'last30': {
+        const from = new Date(today);
+        from.setDate(from.getDate() - 30);
+        setFromDate(`${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`);
+        setToDate(`${year}-${String(month + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+        setMonth('');
+        break;
+      }
+      case 'thisMonth': {
+        setMonth(`${year}-${String(month + 1).padStart(2, '0')}`);
+        setFromDate('');
+        setToDate('');
+        break;
+      }
+      case 'lastMonth': {
+        const lastMonth = month === 0 ? 11 : month - 1;
+        const lastMonthYear = month === 0 ? year - 1 : year;
+        setMonth(`${lastMonthYear}-${String(lastMonth + 1).padStart(2, '0')}`);
+        setFromDate('');
+        setToDate('');
+        break;
+      }
+      case 'all': {
+        setMonth('');
+        setFromDate('');
+        setToDate('');
+        break;
+      }
+    }
+  };
+
   if (!user) {
     return (
       <View style={{ flex: 1 }}>
@@ -209,9 +292,10 @@ export default function CalculationsScreen() {
 
         <Card title="Filter" subtitle="Filter by date/month, amount, type, and price range">
           <YStack gap="$3" marginTop="$2">
+            {/* Calculation Type Filter */}
             <YStack gap="$2">
               <TText color="$muted" fontSize={12}>
-                Type
+                Calculation Type
               </TText>
               <Segmented
                 options={['all', 'transfer', 'bond', 'repayment']}
@@ -220,94 +304,246 @@ export default function CalculationsScreen() {
               />
             </YStack>
 
-            <Field
-              label="Filter by month (YYYY-MM)"
-              value={month}
-              onChangeText={setMonth}
-              autoCapitalize="none"
-              placeholder="2026-01"
-            />
+            {/* Quick Date Presets */}
+            <YStack gap="$2">
+              <TText color="$muted" fontSize={12}>
+                Quick Date Filter
+              </TText>
+              <XStack gap="$2" flexWrap="wrap">
+                <TouchableOpacity
+                  onPress={() => setDatePreset('last7')}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    backgroundColor: (fromDate && toDate && !month) ? '#0A5C3B' : '#F3F4F6',
+                    borderWidth: 1,
+                    borderColor: (fromDate && toDate && !month) ? '#0A5C3B' : '#E5E7EB',
+                  }}
+                >
+                  <TText 
+                    fontSize={12} 
+                    fontWeight="600" 
+                    color={(fromDate && toDate && !month) ? '#FFFFFF' : '#6B7280'}
+                  >
+                    Last 7 days
+                  </TText>
+                </TouchableOpacity>
 
-            <XStack gap="$2">
-              <YStack flex={1}>
-                <Field
-                  label="From date (YYYY-MM-DD)"
-                  value={fromDate}
-                  onChangeText={setFromDate}
-                  autoCapitalize="none"
-                  placeholder="2026-01-01"
-                />
-              </YStack>
-              <YStack flex={1}>
-                <Field
-                  label="To date (YYYY-MM-DD)"
-                  value={toDate}
-                  onChangeText={setToDate}
-                  autoCapitalize="none"
-                  placeholder="2026-01-31"
-                />
-              </YStack>
-            </XStack>
+                <TouchableOpacity
+                  onPress={() => setDatePreset('last30')}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    backgroundColor: (fromDate && toDate && !month) ? '#F3F4F6' : '#F3F4F6',
+                    borderWidth: 1,
+                    borderColor: '#E5E7EB',
+                  }}
+                >
+                  <TText fontSize={12} fontWeight="600" color="#6B7280">
+                    Last 30 days
+                  </TText>
+                </TouchableOpacity>
 
-            <XStack gap="$2">
-              <YStack flex={1}>
-                <Field
-                  label="Price min"
-                  value={priceMin}
-                  onChangeText={setPriceMin}
-                  keyboardType="numeric"
-                  placeholder="0"
-                />
-              </YStack>
-              <YStack flex={1}>
-                <Field
-                  label="Price max"
-                  value={priceMax}
-                  onChangeText={setPriceMax}
-                  keyboardType="numeric"
-                  placeholder="10 000 000"
-                />
-              </YStack>
-            </XStack>
+                <TouchableOpacity
+                  onPress={() => setDatePreset('thisMonth')}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    backgroundColor: month ? '#0A5C3B' : '#F3F4F6',
+                    borderWidth: 1,
+                    borderColor: month ? '#0A5C3B' : '#E5E7EB',
+                  }}
+                >
+                  <TText 
+                    fontSize={12} 
+                    fontWeight="600" 
+                    color={month ? '#FFFFFF' : '#6B7280'}
+                  >
+                    This month
+                  </TText>
+                </TouchableOpacity>
 
-            <XStack gap="$2">
-              <YStack flex={1}>
-                <Field
-                  label="Amount min"
-                  value={amountMin}
-                  onChangeText={setAmountMin}
-                  keyboardType="numeric"
-                  placeholder="0"
-                />
-              </YStack>
-              <YStack flex={1}>
-                <Field
-                  label="Amount max"
-                  value={amountMax}
-                  onChangeText={setAmountMax}
-                  keyboardType="numeric"
-                  placeholder="2 000 000"
-                />
-              </YStack>
-            </XStack>
+                <TouchableOpacity
+                  onPress={() => setDatePreset('lastMonth')}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    backgroundColor: '#F3F4F6',
+                    borderWidth: 1,
+                    borderColor: '#E5E7EB',
+                  }}
+                >
+                  <TText fontSize={12} fontWeight="600" color="#6B7280">
+                    Last month
+                  </TText>
+                </TouchableOpacity>
 
-            <Button
-              variant="outline"
-              borderColor="#9CA3AF"
-              hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
-              onPress={() => {
-                setType('all');
-                setMonth('');
-                setFromDate('');
-                setToDate('');
-                setPriceMin('');
-                setPriceMax('');
-                setAmountMin('');
-                setAmountMax('');
+                <TouchableOpacity
+                  onPress={() => setDatePreset('all')}
+                  style={{
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    backgroundColor: (!month && !fromDate && !toDate) ? '#0A5C3B' : '#F3F4F6',
+                    borderWidth: 1,
+                    borderColor: (!month && !fromDate && !toDate) ? '#0A5C3B' : '#E5E7EB',
+                  }}
+                >
+                  <TText 
+                    fontSize={12} 
+                    fontWeight="600" 
+                    color={(!month && !fromDate && !toDate) ? '#FFFFFF' : '#6B7280'}
+                  >
+                    All time
+                  </TText>
+                </TouchableOpacity>
+              </XStack>
+            </YStack>
+
+            {/* Advanced Filters Toggle */}
+            <TouchableOpacity
+              onPress={() => setShowAdvanced(!showAdvanced)}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: 8,
+                paddingHorizontal: 4,
               }}
             >
-              <BtnText color="#6B7280">Clear filters</BtnText>
-            </Button>
+              <XStack gap="$2" alignItems="center">
+                <TText fontSize={14} fontWeight="600" color="$brand">
+                  Advanced Filters
+                </TText>
+                {activeFilterCount > 0 && (
+                  <View
+                    style={{
+                      backgroundColor: '#0A5C3B',
+                      borderRadius: 12,
+                      paddingHorizontal: 8,
+                      paddingVertical: 2,
+                      minWidth: 20,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <TText fontSize={11} fontWeight="700" color="#FFFFFF">
+                      {activeFilterCount}
+                    </TText>
+                  </View>
+                )}
+              </XStack>
+              <Ionicons 
+                name={showAdvanced ? 'chevron-up' : 'chevron-down'} 
+                size={20} 
+                color="#0A5C3B" 
+              />
+            </TouchableOpacity>
+
+            {/* Advanced Filters - Collapsible */}
+            {showAdvanced && (
+              <YStack gap="$3" paddingTop="$2">
+                <Field
+                  label="Specific Month (YYYY-MM)"
+                  value={month}
+                  onChangeText={setMonth}
+                  autoCapitalize="none"
+                  placeholder="e.g. 2026-01"
+                />
+
+                <XStack gap="$2">
+                  <YStack flex={1}>
+                    <Field
+                      label="From Date"
+                      value={fromDate}
+                      onChangeText={setFromDate}
+                      autoCapitalize="none"
+                      placeholder="YYYY-MM-DD"
+                    />
+                  </YStack>
+                  <YStack flex={1}>
+                    <Field
+                      label="To Date"
+                      value={toDate}
+                      onChangeText={setToDate}
+                      autoCapitalize="none"
+                      placeholder="YYYY-MM-DD"
+                    />
+                  </YStack>
+                </XStack>
+
+                <YStack gap="$1">
+                  <TText color="$muted" fontSize={12}>
+                    Input Amount Range (Property Price / Bond Amount)
+                  </TText>
+                  <XStack gap="$2">
+                    <YStack flex={1}>
+                      <Field
+                        label=""
+                        value={priceMin}
+                        onChangeText={setPriceMin}
+                        keyboardType="numeric"
+                        placeholder="Min (e.g. 500000)"
+                      />
+                    </YStack>
+                    <YStack flex={1}>
+                      <Field
+                        label=""
+                        value={priceMax}
+                        onChangeText={setPriceMax}
+                        keyboardType="numeric"
+                        placeholder="Max (e.g. 5000000)"
+                      />
+                    </YStack>
+                  </XStack>
+                </YStack>
+
+                <YStack gap="$1">
+                  <TText color="$muted" fontSize={12}>
+                    Result Amount Range (Total Costs / Monthly Payment)
+                  </TText>
+                  <XStack gap="$2">
+                    <YStack flex={1}>
+                      <Field
+                        label=""
+                        value={amountMin}
+                        onChangeText={setAmountMin}
+                        keyboardType="numeric"
+                        placeholder="Min (e.g. 10000)"
+                      />
+                    </YStack>
+                    <YStack flex={1}>
+                      <Field
+                        label=""
+                        value={amountMax}
+                        onChangeText={setAmountMax}
+                        keyboardType="numeric"
+                        placeholder="Max (e.g. 200000)"
+                      />
+                    </YStack>
+                  </XStack>
+                </YStack>
+              </YStack>
+            )}
+
+            {/* Clear Filters Button */}
+            {activeFilterCount > 0 && (
+              <Button
+                variant="outline"
+                borderColor="#DC3545"
+                backgroundColor="#FFF5F5"
+                hoverStyle={{ backgroundColor: '#FEE2E2', borderColor: '#DC3545' }}
+                onPress={clearAllFilters}
+              >
+                <XStack gap="$2" alignItems="center" justifyContent="center">
+                  <Ionicons name="close-circle-outline" size={18} color="#DC3545" />
+                  <BtnText color="#DC3545">Clear All Filters ({activeFilterCount})</BtnText>
+                </XStack>
+              </Button>
+            )}
           </YStack>
         </Card>
 
@@ -326,45 +562,116 @@ export default function CalculationsScreen() {
             </YStack>
           </Card>
         ) : (
-          filtered.map((c) => (
-            <YStack key={c.id} marginBottom="$3">
-              <Card>
-                <YStack padding="$3" gap="$3">
-                  <XStack justifyContent="space-between" alignItems="flex-start">
-                    <YStack flex={1}>
-                      <View
-                        style={{
-                          backgroundColor:
-                            c.type === 'transfer'
-                              ? '#E3F2FD'
-                              : c.type === 'bond'
-                                ? '#FFF3E0'
-                                : '#F3E5F5',
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                          borderRadius: 8,
-                          alignSelf: 'flex-start',
-                          marginBottom: 8,
-                        }}
-                      >
-                        <TText fontSize={12} fontWeight="700" style={{ textTransform: 'uppercase', color: '#0A5C3B' }}>
-                          {c.type}
-                        </TText>
-                      </View>
-                      {c.name ? <TText fontWeight="700" fontSize={18} color="$color">{c.name}</TText> : null}
-                    </YStack>
-                    <TText fontSize={12} color="$muted">
-                      {c.createdAt?.seconds
-                        ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('en-ZA', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          })
-                        : ''}
-                    </TText>
-                  </XStack>
+          sortedAndRanked.map((c) => {
+            const isTopThree = c.rank <= 3;
+            const rankColors = {
+              1: { bg: '#0A5C3B', text: '#FFFFFF', icon: '#FFD700' }, // Gold for #1
+              2: { bg: '#31B276', text: '#FFFFFF', icon: '#C0C0C0' }, // Silver for #2
+              3: { bg: '#E8F5E9', text: '#0A5C3B', icon: '#CD7F32' }, // Bronze for #3
+              default: { bg: '#FFFFFF', text: '#0A5C3B', icon: '#0A5C3B' },
+            };
+            const colors = isTopThree ? rankColors[c.rank as keyof typeof rankColors] : rankColors.default;
+            const resultAmount = extractResultAmount(c?.result);
 
-                  <View style={{ backgroundColor: '#F9F9F9', padding: 12, borderRadius: 8 }}>
+            return (
+              <YStack key={c.id} marginBottom="$3">
+                <Card>
+                  <YStack padding="$3" gap="$3">
+                    {/* Ranking Header */}
+                    <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
+                      <XStack alignItems="center" gap="$2" flex={1}>
+                        {/* Rank Badge */}
+                        <View
+                          style={{
+                            width: isTopThree ? 48 : 40,
+                            height: isTopThree ? 48 : 40,
+                            borderRadius: isTopThree ? 24 : 20,
+                            backgroundColor: colors.bg,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderWidth: isTopThree ? 2 : 1,
+                            borderColor: isTopThree ? colors.icon : '#0A5C3B',
+                            shadowColor: isTopThree ? colors.icon : 'transparent',
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: isTopThree ? 0.3 : 0,
+                            shadowRadius: 4,
+                            elevation: isTopThree ? 5 : 0,
+                          }}
+                        >
+                          {isTopThree ? (
+                            <Ionicons 
+                              name={c.rank === 1 ? 'trophy' : c.rank === 2 ? 'medal' : 'medal-outline'} 
+                              size={c.rank === 1 ? 24 : 20} 
+                              color={colors.icon} 
+                            />
+                          ) : (
+                            <TText fontSize={16} fontWeight="700" color={colors.text}>
+                              #{c.rank}
+                            </TText>
+                          )}
+                        </View>
+                        
+                        {/* Type Badge */}
+                        <View
+                          style={{
+                            backgroundColor:
+                              c.type === 'transfer'
+                                ? '#E3F2FD'
+                                : c.type === 'bond'
+                                  ? '#FFF3E0'
+                                  : '#F3E5F5',
+                            paddingHorizontal: 10,
+                            paddingVertical: 5,
+                            borderRadius: 8,
+                          }}
+                        >
+                          <TText fontSize={12} fontWeight="700" style={{ textTransform: 'uppercase', color: '#0A5C3B' }}>
+                            {c.type}
+                          </TText>
+                        </View>
+                      </XStack>
+                      
+                      {/* Main Amount Display */}
+                      <YStack alignItems="flex-end">
+                        {resultAmount !== undefined && (
+                          <>
+                            <TText fontSize={12} color="$muted" fontWeight="500">
+                              {c.rank === 1 ? 'Highest' : c.rank === sortedAndRanked.length ? 'Lowest' : ''}
+                            </TText>
+                            <TText 
+                              fontSize={isTopThree ? 22 : 18} 
+                              fontWeight="700" 
+                              color={isTopThree ? '#0A5C3B' : '$brand'}
+                            >
+                              {formatZAR(resultAmount)}
+                            </TText>
+                          </>
+                        )}
+                      </YStack>
+                    </XStack>
+
+                    {/* Name and Date */}
+                    <XStack justifyContent="space-between" alignItems="flex-start">
+                      <YStack flex={1}>
+                        {c.name ? (
+                          <TText fontWeight="700" fontSize={18} color="$color" marginBottom="$1">
+                            {c.name}
+                          </TText>
+                        ) : null}
+                      </YStack>
+                      <TText fontSize={12} color="$muted">
+                        {c.createdAt?.seconds
+                          ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('en-ZA', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                          : ''}
+                      </TText>
+                    </XStack>
+
+                    {/* Key Details */}
+                    <View style={{ backgroundColor: '#F9F9F9', padding: 12, borderRadius: 8 }}>
                     <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">
                       Key Details
                     </TText>
@@ -380,9 +687,10 @@ export default function CalculationsScreen() {
                           </TText>
                         </XStack>
                       ))}
-                  </View>
+                    </View>
 
-                  {c.result && Object.keys(c.result).length > 0 ? (
+                    {/* Results Section */}
+                    {c.result && Object.keys(c.result).length > 0 ? (
                     <View style={{ backgroundColor: '#E8F5E9', padding: 12, borderRadius: 8 }}>
                       <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">
                         Results
@@ -400,9 +708,10 @@ export default function CalculationsScreen() {
                           </XStack>
                         ))}
                     </View>
-                  ) : null}
+                    ) : null}
 
-                  {c.pdfUrl ? (
+                    {/* PDF Button */}
+                    {c.pdfUrl ? (
                     <TouchableOpacity
                       onPress={() => {
                         import('expo-web-browser').then((WebBrowser) => {
@@ -422,11 +731,12 @@ export default function CalculationsScreen() {
                       <Ionicons name="document-text" size={18} color="white" />
                       <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>View PDF</Text>
                     </TouchableOpacity>
-                  ) : null}
-                </YStack>
-              </Card>
-            </YStack>
-          ))
+                    ) : null}
+                  </YStack>
+                </Card>
+              </YStack>
+            );
+          })
         )}
       </ScrollView>
       <QuickNavBar />

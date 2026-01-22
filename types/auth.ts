@@ -1,5 +1,7 @@
 export type UserRole = 'customer' | 'agent' | 'admin';
 
+export type UserType = 'estate-agent' | 'developer' | 'homeowner';
+
 export type AccountStatus = 'active' | 'deactivated';
 
 export interface User {
@@ -10,6 +12,7 @@ export interface User {
   firstName?: string;
   surname?: string;
   role: UserRole;
+  userType?: UserType;
   phoneNumber?: string;
   status?: AccountStatus;
   createdAt: Date;
@@ -20,7 +23,7 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, displayName: string, role: UserRole, phoneNumber?: string) => Promise<void>;
+  register: (email: string, password: string, displayName: string, role: UserRole, phoneNumber?: string, userType?: UserType) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (displayName: string, phoneNumber?: string) => Promise<void>;
   updateAccountDetails: (details: {

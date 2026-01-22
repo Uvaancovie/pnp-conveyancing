@@ -3,10 +3,12 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { Linking, Platform, ScrollView, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { Paragraph, Text, XStack, YStack } from 'tamagui';
+import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { QuickNavBar } from '../components/Navigation';
+import theme from '../config/theme.json';
 
 type ServiceItem = {
   id: string;
@@ -18,6 +20,17 @@ export default function ServicesScreen() {
   const router = useRouter();
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
   const { width: windowWidth } = useWindowDimensions();
+
+  const openWhatsApp = () => {
+    const msg = `Hi Pather & Pather, I'd like to chat with a conveyancer about your services.`;
+    const url = `https://wa.me/${theme.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    
+    if (Platform.OS === 'web') {
+      window.open(url, '_blank');
+    } else {
+      Linking.openURL(url);
+    }
+  };
 
   const services: ServiceItem[] = useMemo(
     () => [
@@ -207,6 +220,32 @@ export default function ServicesScreen() {
               </Card>
             );
           })}
+        </YStack>
+
+        {/* Call to Action at the end */}
+        <YStack marginTop="$4">
+          <Card>
+            <YStack gap="$3" alignItems="center" padding="$4">
+            <Text fontWeight="700" fontSize="$6" color="$brand" textAlign="center">
+              Ready to Get Started?
+            </Text>
+            <Paragraph color="$muted" fontSize="$4" textAlign="center" lineHeight="$6">
+              Chat with one of our conveyancers to discuss your legal needs and how we can help you.
+            </Paragraph>
+            <Button
+              onPress={openWhatsApp}
+              backgroundColor="#25D366"
+              borderColor="#25D366"
+              hoverStyle={{ backgroundColor: '#20BA5A', borderColor: '#20BA5A' }}
+              width="100%"
+            >
+              <XStack alignItems="center" gap="$2" justifyContent="center">
+                <Ionicons name="logo-whatsapp" size={22} color="white" />
+                <BtnText fontSize="$5">Chat with Conveyancer</BtnText>
+              </XStack>
+            </Button>
+            </YStack>
+          </Card>
         </YStack>
       </ScrollView>
 
