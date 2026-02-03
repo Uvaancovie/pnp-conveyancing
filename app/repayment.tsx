@@ -1,14 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Platform, ScrollView, View } from 'react-native';
+import { Alert, Platform, useWindowDimensions } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
 import { heroImages } from '../assets/images';
+import { AmountField } from '../components/AmountField';
 import { BtnText, Button } from '../components/Button';
+import { CalculatorActions, CalculatorLayout } from '../components/CalculatorLayout';
 import { Card } from '../components/Card';
 import { ConfirmActionModal } from '../components/ConfirmActionModal';
-import { Field } from '../components/Field';
-import { HeroImage } from '../components/HeroImage';
-import { QuickNavBar } from '../components/Navigation';
 import { ResultRow } from '../components/ResultRow';
 import { SaveCalculationModal } from '../components/SaveCalculationModal';
 import { Segmented } from '../components/Segmented';
@@ -19,17 +18,48 @@ import { saveCalculation } from '../utils/firebase';
 import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
 const YEARS = [5, 10, 20, 25, 30];
+const PRESET_AMOUNTS = [2000000, 4000000, 6000000, 8000000, 12000000];
 
 export default function Repayment(){
   const router = useRouter();
   const { user } = useAuth();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  
   const [amount, setAmount] = useState('6000000');
   const [rate, setRate] = useState('10.5');
   const [years, setYears] = useState<number>(20);
   const [modalVisible, setModalVisible] = useState(false);
   const [savedPromptVisible, setSavedPromptVisible] = useState(false);
+  const [amountError, setAmountError] = useState('');
+  const [rateError, setRateError] = useState('');
+  
   const a = Number((amount||'').replace(/\s|,/g, '')) || 0;
   const r = Number((rate||'').replace(',', '.')) || 0;
+
+  const handleAmountChange = (value: string) => {
+    setAmount(value);
+    const num = Number(value.replace(/\s|,/g, ''));
+    if (num < 0) {
+      setAmountError('Amount must be positive');
+    } else if (num > 100000000) {
+      setAmountError('Amount seems unusually high');
+    } else {
+      setAmountError('');
+    }
+  };
+
+  const handleRateChange = (value: string) => {
+    setRate(value);
+    const num = Number(value.replace(',', '.'));
+    if (num < 0) {
+      setRateError('Rate must be positive');
+    } else if (num > 30) {
+      setRateError('Rate seems unusually high');
+    } else {
+      setRateError('');
+    }
+  };
 
   const { pmt, total, interest } = monthlyRepayment(a, r, years);
 
@@ -95,32 +125,73 @@ export default function Repayment(){
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <HeroImage 
-          source={heroImages.repayment}
-          title="Repayments"
-          subtitle="Calculate monthly payments & totals"
-          height={160}
-          overlayOpacity={0}
-        />
-        
-        <Card>
-          <Field label="Bond Amount (R)" keyboardType="numeric" value={amount} onChangeText={setAmount} placeholder="6 000 000" />
-          <Field label="Interest Rate %" keyboardType="numeric" value={rate} onChangeText={setRate} placeholder="10.5" />
-          <Segmented options={YEARS} value={years} onChange={setYears} />
-        </Card>
-        <Card title="Results">
-          <ResultRow label="Interest Repayment" value={formatZAR(interest)} />
-          <ResultRow label="Total Loan Repayment" value={formatZAR(total)} />
-          <ResultRow big label="Total Monthly Cost" value={formatZAR(pmt)} />
-        </Card>
-        <YStack gap="$3" marginTop="$4">
-          <XStack gap="$3">
-            <Button flex={1} onPress={handleExport}><BtnText>Export PDF / Share</BtnText></Button>
-          </XStack>
-
+    <CalculatorLayout
+      heroImage={heroImages.repayment}
+      title="Repayments"
+      subtitle="Calculate monthly payments & totals"
+      relatedCalculators={
+        <XStack gap="$3" justifyContent="center" flexWrap="wrap">
+          <Button flex={isMobile ? undefined : 1} minWidth={isMobile ? 140 : undefined} backgroundColor="$brand" onPress={() => router.push('/transfer')}>
+            <BtnText>Transfer Costs</BtnText>
+          </Button>
+          <Button flex={isMobile ? undefined : 1} minWidth={isMobile ? 140 : undefined} backgroundColor="$brand" onPress={() => router.push('/bond')}>
+            <BtnText>Bond Costs</BtnText>
+          </Button>
+        </XStack>
+      }
+    >
+      <Card>
+        <YStack gap="$3">
+          <AmountField 
+            label="Bond Amount" 
+            keyboardType="numeric" 
+            value={amount} 
+            onChangeText={handleAmountChange}
+            placeholder="6000000"
+            helpText="Enter your bond/loan amount"
+            presets={PRESET_AMOUNTS}
+            error={amountError}
+          />
+          <AmountField 
+            label="Interest Rate" 
+            keyboardType="numeric" 
+            value={rate} 
+            onChangeText={handleRateChange}
+            placeholder="10.5"
+            helpText="Enter the annual interest rate"
+            suffix="%"
+            maxLength={5}
+            error={rateError}
+          />
+          <YStack gap="$1.5">
+            <Text color="$color" fontWeight="600" fontSize="$4">Loan Term</Text>
+            <Segmented options={YEARS} value={years} onChange={setYears} />
+            <Text color="$muted" fontSize="$2">Select the loan duration in years</Text>
+          </YStack>
+        </YStack>
+    </Card>
+      
+      <Card title="📊 Repayment Breakdown">
+        <ResultRow label="Interest Repayment" value={formatZAR(interest)} />
+        <ResultRow label="Total Loan Repayment" value={formatZAR(total)} />
+        <ResultRow big label="Total Monthly Cost" value={formatZAR(pmt)} />
+        <Text color="$muted" fontSize="$2" marginTop="$2" textAlign="center">
+          📅 Over {years} years ({years * 12} months)
+        </Text>
+    </Card>
+      
+      <CalculatorActions>
+        <XStack gap="$3" flexWrap="wrap">
+          <Button 
+            flex={isMobile ? undefined : 1} 
+            minWidth={isMobile ? '100%' : undefined}
+            onPress={handleExport}
+          >
+            <BtnText>📄 Export PDF / Share</BtnText>
+          </Button>
           <Button
+            flex={isMobile ? undefined : 1}
+            minWidth={isMobile ? '100%' : undefined}
             onPress={() => {
               if (!canSave) {
                 router.push('/register');
@@ -129,59 +200,48 @@ export default function Repayment(){
               setModalVisible(true);
             }}
           >
-            <BtnText>Save to Profile</BtnText>
+            <BtnText>💾 Save to Profile</BtnText>
           </Button>
+        </XStack>
 
-          <Button
-            variant="outline"
-            borderColor="#9CA3AF"
-            hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
-            onPress={() => router.push('/profile')}
-          >
-            <BtnText color="#6B7280">View My Profile</BtnText>
-          </Button>
+        <Button
+          variant="outline"
+          borderColor="#9CA3AF"
+          hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
+          onPress={() => router.push('/profile')}
+        >
+          <BtnText color="#6B7280">👤 View My Profile</BtnText>
+        </Button>
 
-          <Button
-            backgroundColor="#000"
-            borderColor="#000"
-            hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
-            onPress={() => router.push('/services')}
-          >
-            <BtnText>View Other Services</BtnText>
-          </Button>
-          
-          <Text textAlign="center" color="$muted" fontSize="$3" marginTop="$2">Related Calculators</Text>
-          <XStack gap="$3" justifyContent="center">
-            <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/transfer')}>
-              <BtnText>Transfer Costs</BtnText>
-            </Button>
-            <Button flex={1} backgroundColor="$brand" onPress={() => router.push('/bond')}>
-              <BtnText>Bond Costs</BtnText>
-            </Button>
-          </XStack>
-        </YStack>
+        <Button
+          backgroundColor="#000"
+          borderColor="#000"
+          hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
+          onPress={() => router.push('/services')}
+        >
+          <BtnText>🏢 View Other Services</BtnText>
+        </Button>
+      </CalculatorActions>
 
-        <SaveCalculationModal 
-          visible={modalVisible} 
-          onClose={() => setModalVisible(false)} 
-          onSave={handleSave}
-          userRole={user?.role}
-        />
+      <SaveCalculationModal 
+        visible={modalVisible} 
+        onClose={() => setModalVisible(false)} 
+        onSave={handleSave}
+        userRole={user?.role}
+      />
 
-        <ConfirmActionModal
-          visible={savedPromptVisible}
-          title="Saved"
-          message="Calculation saved successfully! Would you like to view your saved calculations?"
-          confirmText="View Saved"
-          cancelText="Stay Here"
-          onCancel={() => setSavedPromptVisible(false)}
-          onConfirm={() => {
-            setSavedPromptVisible(false);
-            router.push('/calculations');
-          }}
-        />
-      </ScrollView>
-      <QuickNavBar />
-    </View>
+      <ConfirmActionModal
+        visible={savedPromptVisible}
+        title="✅ Saved"
+        message="Calculation saved successfully! Would you like to view your saved calculations?"
+        confirmText="View Saved"
+        cancelText="Stay Here"
+        onCancel={() => setSavedPromptVisible(false)}
+        onConfirm={() => {
+          setSavedPromptVisible(false);
+          router.push('/calculations');
+        }}
+      />
+    </CalculatorLayout>
   );
 }
