@@ -34,11 +34,11 @@ export default function Transfer(){
   const [savedPromptVisible, setSavedPromptVisible] = useState(false);
   const [error, setError] = useState('');
   
-  const p = Number((price||'').replace(/\s|,/g, '')) || 0;
+  const p = Number((price||'').replace(/\s|,|R/g, '')) || 0;
   
   const handlePriceChange = (value: string) => {
     setPrice(value);
-    const num = Number(value.replace(/\s|,/g, ''));
+    const num = Number(value.replace(/\s|,|R/g, ''));
     if (num < 0) {
       setError('Price must be positive');
     } else if (num > 100000000) {
@@ -150,7 +150,7 @@ export default function Transfer(){
           keyboardType="numeric" 
           value={price} 
           onChangeText={handlePriceChange}
-          placeholder="2000000"
+          placeholder="2 000 000"
           helpText="Enter the property purchase price"
           presets={PRESET_AMOUNTS}
           error={error}

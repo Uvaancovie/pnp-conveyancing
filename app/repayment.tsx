@@ -34,12 +34,12 @@ export default function Repayment(){
   const [amountError, setAmountError] = useState('');
   const [rateError, setRateError] = useState('');
   
-  const a = Number((amount||'').replace(/\s|,/g, '')) || 0;
+  const a = Number((amount||'').replace(/\s|,|R/g, '')) || 0;
   const r = Number((rate||'').replace(',', '.')) || 0;
 
   const handleAmountChange = (value: string) => {
     setAmount(value);
-    const num = Number(value.replace(/\s|,/g, ''));
+    const num = Number(value.replace(/\s|,|R/g, ''));
     if (num < 0) {
       setAmountError('Amount must be positive');
     } else if (num > 100000000) {
@@ -147,7 +147,7 @@ export default function Repayment(){
             keyboardType="numeric" 
             value={amount} 
             onChangeText={handleAmountChange}
-            placeholder="6000000"
+            placeholder="6 000 000"
             helpText="Enter your bond/loan amount"
             presets={PRESET_AMOUNTS}
             error={amountError}

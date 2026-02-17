@@ -32,9 +32,10 @@ export function AmountField({
 
   const formatDisplay = (val: string) => {
     if (!val) return '';
-    const cleaned = val.replace(/\s|,/g, '');
+    const cleaned = val.replace(/\s|,|R/g, '');
     if (isNaN(Number(cleaned))) return val;
-    return Number(cleaned).toLocaleString('en-ZA');
+    // Format with spaces as thousand separator (South African standard)
+    return Number(cleaned).toLocaleString('en-ZA').replace(/,/g, ' ');
   };
 
   const handlePreset = (amount: number) => {
@@ -56,24 +57,43 @@ export function AmountField({
         )}
       </XStack>
       
-      <TInput 
+      <XStack 
+        alignItems="center"
         borderRadius="$2" 
         borderWidth={focused ? 2 : 1} 
         borderColor={error ? '#EF4444' : focused ? '$brand' : '$border'} 
-        padding="$3" 
-        paddingRight={suffix ? '$8' : '$3'}
-        backgroundColor="$bg" 
-        color="$color"
-        fontSize="$5"
-        fontWeight="600"
-        value={focused ? value : formatDisplay(value)}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        maxLength={maxLength}
-        {...props}
-      />
+        backgroundColor="$bg"
+        paddingLeft="$3"
+      >
+        {!suffix && (
+          <Text 
+            color={value || focused ? "$color" : "$muted"} 
+            fontSize="$5" 
+            fontWeight="600"
+            marginRight="$1"
+          >
+            R
+          </Text>
+        )}
+        <TInput 
+          flex={1}
+          borderWidth={0}
+          padding="$3" 
+          paddingLeft="$1"
+          paddingRight={suffix ? '$8' : '$3'}
+          backgroundColor="transparent" 
+          color="$color"
+          fontSize="$5"
+          fontWeight="600"
+          value={formatDisplay(value)}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          maxLength={maxLength}
+          {...props}
+        />
+      </XStack>
       
       {suffix && (
         <Text 

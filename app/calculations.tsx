@@ -1,9 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
 import { Text as TText, XStack, YStack } from 'tamagui';
 import { heroImages } from '../assets/images';
+import { AmountField } from '../components/AmountField';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
@@ -19,7 +24,7 @@ type CalcType = 'all' | 'transfer' | 'bond' | 'repayment';
 function parseNumber(input: unknown): number | undefined {
   if (typeof input === 'number' && Number.isFinite(input)) return input;
   if (typeof input !== 'string') return undefined;
-  const cleaned = input.replace(/\s|,/g, '');
+  const cleaned = input.replace(/\s|,|R/g, '');
   if (!cleaned) return undefined;
   const value = Number(cleaned);
   return Number.isFinite(value) ? value : undefined;
@@ -94,6 +99,8 @@ function extractResultAmount(result: any): number | undefined {
 export default function CalculationsScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { width } = useWindowDimensions();
+  const isSmallDevice = width < 380;
 
   const [calcs, setCalcs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -321,9 +328,9 @@ export default function CalculationsScreen() {
                     borderColor: (fromDate && toDate && !month) ? '#0A5C3B' : '#E5E7EB',
                   }}
                 >
-                  <TText 
-                    fontSize={12} 
-                    fontWeight="600" 
+                  <TText
+                    fontSize={12}
+                    fontWeight="600"
                     color={(fromDate && toDate && !month) ? '#FFFFFF' : '#6B7280'}
                   >
                     Last 7 days
@@ -357,9 +364,9 @@ export default function CalculationsScreen() {
                     borderColor: month ? '#0A5C3B' : '#E5E7EB',
                   }}
                 >
-                  <TText 
-                    fontSize={12} 
-                    fontWeight="600" 
+                  <TText
+                    fontSize={12}
+                    fontWeight="600"
                     color={month ? '#FFFFFF' : '#6B7280'}
                   >
                     This month
@@ -393,9 +400,9 @@ export default function CalculationsScreen() {
                     borderColor: (!month && !fromDate && !toDate) ? '#0A5C3B' : '#E5E7EB',
                   }}
                 >
-                  <TText 
-                    fontSize={12} 
-                    fontWeight="600" 
+                  <TText
+                    fontSize={12}
+                    fontWeight="600"
                     color={(!month && !fromDate && !toDate) ? '#FFFFFF' : '#6B7280'}
                   >
                     All time
@@ -436,10 +443,10 @@ export default function CalculationsScreen() {
                   </View>
                 )}
               </XStack>
-              <Ionicons 
-                name={showAdvanced ? 'chevron-up' : 'chevron-down'} 
-                size={20} 
-                color="#0A5C3B" 
+              <Ionicons
+                name={showAdvanced ? 'chevron-up' : 'chevron-down'}
+                size={20}
+                color="#0A5C3B"
               />
             </TouchableOpacity>
 
@@ -481,21 +488,21 @@ export default function CalculationsScreen() {
                   </TText>
                   <XStack gap="$2">
                     <YStack flex={1}>
-                      <Field
+                      <AmountField
                         label=""
                         value={priceMin}
                         onChangeText={setPriceMin}
                         keyboardType="numeric"
-                        placeholder="Min (e.g. 500000)"
+                        placeholder="500 000"
                       />
                     </YStack>
                     <YStack flex={1}>
-                      <Field
+                      <AmountField
                         label=""
                         value={priceMax}
                         onChangeText={setPriceMax}
                         keyboardType="numeric"
-                        placeholder="Max (e.g. 5000000)"
+                        placeholder="5 000 000"
                       />
                     </YStack>
                   </XStack>
@@ -507,21 +514,21 @@ export default function CalculationsScreen() {
                   </TText>
                   <XStack gap="$2">
                     <YStack flex={1}>
-                      <Field
+                      <AmountField
                         label=""
                         value={amountMin}
                         onChangeText={setAmountMin}
                         keyboardType="numeric"
-                        placeholder="Min (e.g. 10000)"
+                        placeholder="10 000"
                       />
                     </YStack>
                     <YStack flex={1}>
-                      <Field
+                      <AmountField
                         label=""
                         value={amountMax}
                         onChangeText={setAmountMax}
                         keyboardType="numeric"
-                        placeholder="Max (e.g. 200000)"
+                        placeholder="200 000"
                       />
                     </YStack>
                   </XStack>
@@ -583,8 +590,8 @@ export default function CalculationsScreen() {
                         {/* Rank Badge */}
                         <View
                           style={{
-                            width: isTopThree ? 48 : 40,
-                            height: isTopThree ? 48 : 40,
+                            width: isTopThree ? (isSmallDevice ? 36 : 48) : (isSmallDevice ? 32 : 40),
+                            height: isTopThree ? (isSmallDevice ? 36 : 48) : (isSmallDevice ? 32 : 40),
                             borderRadius: isTopThree ? 24 : 20,
                             backgroundColor: colors.bg,
                             alignItems: 'center',
@@ -599,18 +606,18 @@ export default function CalculationsScreen() {
                           }}
                         >
                           {isTopThree ? (
-                            <Ionicons 
-                              name={c.rank === 1 ? 'trophy' : c.rank === 2 ? 'medal' : 'medal-outline'} 
-                              size={c.rank === 1 ? 24 : 20} 
-                              color={colors.icon} 
+                            <Ionicons
+                              name={c.rank === 1 ? 'trophy' : c.rank === 2 ? 'medal' : 'medal-outline'}
+                              size={c.rank === 1 ? (isSmallDevice ? 18 : 24) : (isSmallDevice ? 16 : 20)}
+                              color={colors.icon}
                             />
                           ) : (
-                            <TText fontSize={16} fontWeight="700" color={colors.text}>
+                            <TText fontSize={isSmallDevice ? 12 : 16} fontWeight="700" color={colors.text}>
                               #{c.rank}
                             </TText>
                           )}
                         </View>
-                        
+
                         {/* Type Badge */}
                         <View
                           style={{
@@ -630,18 +637,20 @@ export default function CalculationsScreen() {
                           </TText>
                         </View>
                       </XStack>
-                      
+
                       {/* Main Amount Display */}
-                      <YStack alignItems="flex-end">
+                      <YStack alignItems="flex-end" flexShrink={1} marginLeft="$2">
                         {resultAmount !== undefined && (
                           <>
-                            <TText fontSize={12} color="$muted" fontWeight="500">
+                            <TText fontSize={10} color="$muted" fontWeight="500" numberOfLines={1}>
                               {c.rank === 1 ? 'Highest' : c.rank === sortedAndRanked.length ? 'Lowest' : ''}
                             </TText>
-                            <TText 
-                              fontSize={isTopThree ? 22 : 18} 
-                              fontWeight="700" 
+                            <TText
+                              fontSize={isTopThree ? (isSmallDevice ? 16 : 20) : (isSmallDevice ? 14 : 16)}
+                              fontWeight="700"
                               color={isTopThree ? '#0A5C3B' : '$brand'}
+                              numberOfLines={1}
+                              style={{ flexShrink: 1 }}
                             >
                               {formatZAR(resultAmount)}
                             </TText>
@@ -662,76 +671,127 @@ export default function CalculationsScreen() {
                       <TText fontSize={12} color="$muted">
                         {c.createdAt?.seconds
                           ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('en-ZA', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })
                           : ''}
                       </TText>
                     </XStack>
 
                     {/* Key Details */}
                     <View style={{ backgroundColor: '#F9F9F9', padding: 12, borderRadius: 8 }}>
-                    <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">
-                      Key Details
-                    </TText>
-                    {Object.entries(c.inputs || {})
-                      .slice(0, 3)
-                      .map(([k, v]) => (
-                        <XStack key={k} justifyContent="space-between" marginBottom="$1">
-                          <TText fontSize={13} color="$muted" style={{ textTransform: 'capitalize' }}>
-                            {k.replace(/([A-Z])/g, ' $1').trim()}
-                          </TText>
-                          <TText fontSize={13} fontWeight="600" color="$color">
-                            {typeof v === 'number' ? formatZAR(v) : String(v)}
-                          </TText>
-                        </XStack>
-                      ))}
-                    </View>
-
-                    {/* Results Section */}
-                    {c.result && Object.keys(c.result).length > 0 ? (
-                    <View style={{ backgroundColor: '#E8F5E9', padding: 12, borderRadius: 8 }}>
                       <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">
-                        Results
+                        Key Details
                       </TText>
-                      {Object.entries(c.result)
-                        .slice(0, 2)
+                      {Object.entries(c.inputs || {})
+                        .slice(0, 3)
                         .map(([k, v]) => (
-                          <XStack key={k} justifyContent="space-between" marginBottom="$1">
-                            <TText fontSize={13} color="$muted" style={{ textTransform: 'capitalize' }}>
+                          <XStack key={k} justifyContent="space-between" marginBottom="$1" gap="$2">
+                            <TText fontSize={isSmallDevice ? 10 : 12} color="$muted" flex={1} style={{ textTransform: 'capitalize' }}>
                               {k.replace(/([A-Z])/g, ' $1').trim()}
                             </TText>
-                            <TText fontSize={14} fontWeight="700" color="$brand">
+                            <TText fontSize={isSmallDevice ? 10 : 12} fontWeight="600" color="$color" textAlign="right">
                               {typeof v === 'number' ? formatZAR(v) : String(v)}
                             </TText>
                           </XStack>
                         ))}
                     </View>
+
+                    {/* Results Section */}
+                    {c.result && Object.keys(c.result).length > 0 ? (
+                      <View style={{ backgroundColor: '#E8F5E9', padding: 12, borderRadius: 8 }}>
+                        <TText fontWeight="700" fontSize={14} color="$brand" marginBottom="$2">
+                          Results
+                        </TText>
+                        {Object.entries(c.result)
+                          .slice(0, 2)
+                          .map(([k, v]) => (
+                            <XStack key={k} justifyContent="space-between" marginBottom="$1" gap="$2">
+                              <TText fontSize={isSmallDevice ? 10 : 12} color="$muted" flex={1} style={{ textTransform: 'capitalize' }}>
+                                {k.replace(/([A-Z])/g, ' $1').trim()}
+                              </TText>
+                              <TText fontSize={isSmallDevice ? 11 : 12} fontWeight="700" color="$brand" textAlign="right">
+                                {typeof v === 'number' ? formatZAR(v) : String(v)}
+                              </TText>
+                            </XStack>
+                          ))}
+                      </View>
                     ) : null}
 
-                    {/* PDF Button */}
-                    {c.pdfUrl ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        import('expo-web-browser').then((WebBrowser) => {
-                          WebBrowser.openBrowserAsync(c.pdfUrl);
-                        });
-                      }}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 6,
-                        backgroundColor: '#0A5C3B',
-                        paddingVertical: 10,
-                        borderRadius: 8,
-                      }}
-                    >
-                      <Ionicons name="document-text" size={18} color="white" />
-                      <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>View PDF</Text>
-                    </TouchableOpacity>
-                    ) : null}
+                    {/* Action Buttons */}
+                    <XStack gap="$2" marginTop="$2">
+                      {c.pdfUrl ? (
+                        <>
+                          <TouchableOpacity
+                            onPress={() => {
+                              import('expo-web-browser').then((WebBrowser) => {
+                                WebBrowser.openBrowserAsync(c.pdfUrl);
+                              });
+                            }}
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 6,
+                              backgroundColor: '#E8F5E9',
+                              paddingVertical: 10,
+                              borderRadius: 8,
+                              borderWidth: 1,
+                              borderColor: '#0A5C3B',
+                            }}
+                          >
+                            <Ionicons name="eye-outline" size={18} color="#0A5C3B" />
+                            <Text style={{ color: '#0A5C3B', fontWeight: '600', fontSize: 13 }}>View</Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            onPress={async () => {
+                              if (Platform.OS === 'web') {
+                                window.open(c.pdfUrl, '_blank');
+                                return;
+                              }
+
+                              try {
+                                const filename = `Calculation_${c.name || c.id}.pdf`.replace(/\s+/g, '_');
+                                const fileUri = FileSystem.cacheDirectory + filename;
+
+                                const downloadResumable = FileSystem.createDownloadResumable(
+                                  c.pdfUrl,
+                                  fileUri
+                                );
+
+                                const result = await downloadResumable.downloadAsync();
+                                if (result) {
+                                  await Sharing.shareAsync(result.uri, {
+                                    mimeType: 'application/pdf',
+                                    dialogTitle: 'PnP Calculation PDF',
+                                    UTI: 'com.adobe.pdf'
+                                  });
+                                }
+                              } catch (error) {
+                                console.error('Error sharing PDF:', error);
+                                Alert.alert('Error', 'Could not prepare the PDF for sharing.');
+                              }
+                            }}
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 6,
+                              backgroundColor: '#0A5C3B',
+                              paddingVertical: 10,
+                              borderRadius: 8,
+                            }}
+                          >
+                            <Ionicons name="share-outline" size={18} color="white" />
+                            <Text style={{ color: 'white', fontWeight: '600', fontSize: 13 }}>Share/Save</Text>
+                          </TouchableOpacity>
+                        </>
+                      ) : null}
+                    </XStack>
                   </YStack>
                 </Card>
               </YStack>

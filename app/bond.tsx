@@ -33,11 +33,11 @@ export default function Bond(){
   const [savedPromptVisible, setSavedPromptVisible] = useState(false);
   const [error, setError] = useState('');
   
-  const a = Number((amount||'').replace(/\s|,/g, '')) || 0;
+  const a = Number((amount||'').replace(/\s|,|R/g, '')) || 0;
   
   const handleAmountChange = (value: string) => {
     setAmount(value);
-    const num = Number(value.replace(/\s|,/g, ''));
+    const num = Number(value.replace(/\s|,|R/g, ''));
     if (num < 0) {
       setError('Amount must be positive');
     } else if (num > 100000000) {
@@ -144,7 +144,7 @@ export default function Bond(){
           keyboardType="numeric" 
           value={amount} 
           onChangeText={handleAmountChange}
-          placeholder="4000000"
+          placeholder="4 000 000"
           helpText="Enter the total bond amount you're registering"
           presets={PRESET_AMOUNTS}
           error={error}

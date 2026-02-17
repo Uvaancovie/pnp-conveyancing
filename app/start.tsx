@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Alert, Platform, ScrollView, View } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
 import { galleryImages } from '../assets/images';
+import { AmountField } from '../components/AmountField';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
@@ -41,7 +42,7 @@ export default function Start(){
         phone,
         email,
         suburb: suburb || undefined,
-        price: price ? Number((price || '').replace(/\s|,/g, '')) : undefined,
+        price: price ? Number((price || '').replace(/\s|,|R/g, '')) : undefined,
       });
     } catch (err) {
       console.log('createLead error (non-blocking):', err);
@@ -51,7 +52,7 @@ export default function Start(){
       `Hi Pather & Pather, I'm starting a transfer.\n` +
       `Name: ${fullName}\nPhone: ${phone}\nEmail: ${email}\n` +
       (suburb ? `Suburb: ${suburb}\n` : '') +
-      (price ? `Price: R${price}\n` : '');
+      (price ? `Price: R${Number(price.replace(/\s|,|R/g, '')).toLocaleString('en-ZA')}\n` : '');
     const url = `https://wa.me/${theme.whatsappNumber}?text=${encodeURIComponent(msg)}`;
     
     console.log('Opening WhatsApp URL:', url);
@@ -83,7 +84,7 @@ export default function Start(){
             <Field label="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="083 123 4567" />
             <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" placeholder="email@example.com" />
             <Field label="Suburb (optional)" value={suburb} onChangeText={setSuburb} placeholder="e.g. Umhlanga" />
-            <Field label="Purchase Price (optional)" value={price} onChangeText={setPrice} keyboardType="numeric" placeholder="2 000 000" />
+            <AmountField label="Purchase Price (optional)" value={price} onChangeText={setPrice} keyboardType="numeric" placeholder="2 000 000" />
           </YStack>
         </Card>
         
