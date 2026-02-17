@@ -639,18 +639,19 @@ export default function CalculationsScreen() {
                       </XStack>
 
                       {/* Main Amount Display */}
-                      <YStack alignItems="flex-end" flexShrink={1} marginLeft="$2">
+                      <YStack alignItems="flex-end" flexShrink={1} marginLeft="$2" style={{ maxWidth: '45%' }}>
                         {resultAmount !== undefined && (
                           <>
                             <TText fontSize={10} color="$muted" fontWeight="500" numberOfLines={1}>
                               {c.rank === 1 ? 'Highest' : c.rank === sortedAndRanked.length ? 'Lowest' : ''}
                             </TText>
                             <TText
-                              fontSize={isTopThree ? (isSmallDevice ? 16 : 20) : (isSmallDevice ? 14 : 16)}
+                              fontSize={isTopThree ? (isSmallDevice ? 14 : 20) : (isSmallDevice ? 12 : 16)}
                               fontWeight="700"
                               color={isTopThree ? '#0A5C3B' : '$brand'}
                               numberOfLines={1}
-                              style={{ flexShrink: 1 }}
+                              adjustsFontSizeToFit
+                              minimumFontScale={0.7}
                             >
                               {formatZAR(resultAmount)}
                             </TText>
@@ -687,11 +688,11 @@ export default function CalculationsScreen() {
                       {Object.entries(c.inputs || {})
                         .slice(0, 3)
                         .map(([k, v]) => (
-                          <XStack key={k} justifyContent="space-between" marginBottom="$1" gap="$2">
-                            <TText fontSize={isSmallDevice ? 10 : 12} color="$muted" flex={1} style={{ textTransform: 'capitalize' }}>
+                          <XStack key={k} justifyContent="space-between" alignItems="center" marginBottom="$1" gap="$3">
+                            <TText fontSize={isSmallDevice ? 10 : 12} color="$muted" style={{ textTransform: 'capitalize', flexShrink: 1, flexBasis: '50%', maxWidth: '55%' }} numberOfLines={2}>
                               {k.replace(/([A-Z])/g, ' $1').trim()}
                             </TText>
-                            <TText fontSize={isSmallDevice ? 10 : 12} fontWeight="600" color="$color" textAlign="right">
+                            <TText fontSize={isSmallDevice ? 10 : 12} fontWeight="600" color="$color" textAlign="right" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ flexShrink: 0, minWidth: 90 }}>
                               {typeof v === 'number' ? formatZAR(v) : String(v)}
                             </TText>
                           </XStack>
@@ -707,11 +708,11 @@ export default function CalculationsScreen() {
                         {Object.entries(c.result)
                           .slice(0, 2)
                           .map(([k, v]) => (
-                            <XStack key={k} justifyContent="space-between" marginBottom="$1" gap="$2">
-                              <TText fontSize={isSmallDevice ? 10 : 12} color="$muted" flex={1} style={{ textTransform: 'capitalize' }}>
+                            <XStack key={k} justifyContent="space-between" alignItems="center" marginBottom="$1" gap="$3">
+                              <TText fontSize={isSmallDevice ? 10 : 12} color="$muted" style={{ textTransform: 'capitalize', flexShrink: 1, flexBasis: '50%', maxWidth: '55%' }} numberOfLines={2}>
                                 {k.replace(/([A-Z])/g, ' $1').trim()}
                               </TText>
-                              <TText fontSize={isSmallDevice ? 11 : 12} fontWeight="700" color="$brand" textAlign="right">
+                              <TText fontSize={isSmallDevice ? 10 : 12} fontWeight="700" color="$brand" textAlign="right" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ flexShrink: 0, minWidth: 90 }}>
                                 {typeof v === 'number' ? formatZAR(v) : String(v)}
                               </TText>
                             </XStack>

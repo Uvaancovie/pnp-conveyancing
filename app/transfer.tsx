@@ -21,21 +21,22 @@ import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator'
 
 const PRESET_AMOUNTS = [1000000, 2000000, 3000000, 5000000, 8000000];
 
-export default function Transfer(){
+export default function Transfer() {
   const router = useRouter();
   const { user } = useAuth();
   const { data } = useConfig();
   const cfg = data ?? defaultConfig;
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
-  
+
   const [price, setPrice] = useState('2000000');
   const [modalVisible, setModalVisible] = useState(false);
   const [savedPromptVisible, setSavedPromptVisible] = useState(false);
   const [error, setError] = useState('');
-  
-  const p = Number((price||'').replace(/\s|,|R/g, '')) || 0;
-  
+  const [exporting, setExporting] = useState(false);
+
+  const p = Number((price || '').replace(/\s|,|R/g, '')) || 0;
+
   const handlePriceChange = (value: string) => {
     setPrice(value);
     const num = Number(value.replace(/\s|,|R/g, ''));
@@ -51,7 +52,7 @@ export default function Transfer(){
   const duty = calcTransferDuty(p, cfg.duty.brackets);
   const exVat = fixedBandFee(p, cfg.feesTransfer.fixedBands) ?? tieredFee(p, cfg.feesTransfer.tiers);
   const atty = Math.round(exVat * (1 + cfg.feesTransfer.vatRate));
-  const deeds = cfg.feesTransfer.deedsOfficeByPrice.find(b=>!b.max || p <= b.max)?.fee ?? 0;
+  const deeds = cfg.feesTransfer.deedsOfficeByPrice.find(b => !b.max || p <= b.max)?.fee ?? 0;
   const d = cfg.feesTransfer.disbursements ?? {} as any;
   const total = atty + (d.postage ?? 0) + (d.electronicGen ?? 0) + (d.fica ?? 0) + (d.deedsSearch ?? 0) + (d.ratesClear ?? 0) + deeds + duty;
 
@@ -84,9 +85,9 @@ export default function Transfer(){
         }
       }
 
-      const payload: any = { 
-        type: 'transfer', 
-        inputs: { price: p }, 
+      const payload: any = {
+        type: 'transfer',
+        inputs: { price: p },
         result: { total, duty, atty },
         name
       };
@@ -94,7 +95,7 @@ export default function Transfer(){
 
       await saveCalculation(payload);
       setSavedPromptVisible(true);
-    } catch (err: any) { 
+    } catch (err: any) {
       console.error(err);
       if (err.message === 'not-signed-in') {
         router.push('/register');
@@ -107,6 +108,8 @@ export default function Transfer(){
   };
 
   const handleExport = async () => {
+    if (exporting) return;
+    setExporting(true);
     try {
       await generateAndSharePDF(
         'Transfer Cost Calculation',
@@ -125,6 +128,8 @@ export default function Transfer(){
       );
     } catch (error) {
       Alert.alert('Error', 'Failed to generate PDF');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -145,10 +150,10 @@ export default function Transfer(){
       }
     >
       <Card>
-        <AmountField 
-          label="Purchase Price" 
-          keyboardType="numeric" 
-          value={price} 
+        <AmountField
+          label="Purchase Price"
+          keyboardType="numeric"
+          value={price}
           onChangeText={handlePriceChange}
           placeholder="2 000 000"
           helpText="Enter the property purchase price"
@@ -158,8 +163,8 @@ export default function Transfer(){
         <Text color="#9CA3AF" fontSize="$2" marginTop="$2" textAlign="center">
           💡 Quotation values subject to change
         </Text>
-    </Card>
-      
+      </Card>
+
       <Card title="📊 Cost Breakdown">
         <ResultRow label="Transfer Attorney Fees" value={formatZAR(atty)} />
         <ResultRow label="Postages & Petties" value={formatZAR(d.postage ?? 0)} />
@@ -170,16 +175,18 @@ export default function Transfer(){
         <ResultRow label="Rates Clearance Fees" value={formatZAR(d.ratesClear ?? 0)} />
         <ResultRow label="Transfer Duty" value={formatZAR(duty)} />
         <ResultRow big label="Total Transfer Costs (incl. VAT)" value={formatZAR(total)} />
-    </Card>
-      
+      </Card>
+
       <CalculatorActions>
         <XStack gap="$3" flexWrap="wrap">
-          <Button 
-            flex={isMobile ? undefined : 1} 
+          <Button
+            flex={isMobile ? undefined : 1}
             minWidth={isMobile ? '100%' : undefined}
             onPress={handleExport}
+            disabled={exporting}
+            opacity={exporting ? 0.6 : 1}
           >
-            <BtnText>📄 Export PDF / Share</BtnText>
+            <BtnText>{exporting ? '⏳ Generating...' : '📄 Export PDF / Share'}</BtnText>
           </Button>
           <Button
             flex={isMobile ? undefined : 1}
@@ -215,9 +222,9 @@ export default function Transfer(){
         </Button>
       </CalculatorActions>
 
-      <SaveCalculationModal 
-        visible={modalVisible} 
-        onClose={() => setModalVisible(false)} 
+      <SaveCalculationModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
         onSave={handleSave}
         userRole={user?.role}
       />

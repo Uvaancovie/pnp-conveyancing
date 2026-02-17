@@ -20,12 +20,12 @@ import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator'
 const YEARS = [5, 10, 20, 25, 30];
 const PRESET_AMOUNTS = [2000000, 4000000, 6000000, 8000000, 12000000];
 
-export default function Repayment(){
+export default function Repayment() {
   const router = useRouter();
   const { user } = useAuth();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
-  
+
   const [amount, setAmount] = useState('6000000');
   const [rate, setRate] = useState('10.5');
   const [years, setYears] = useState<number>(20);
@@ -33,9 +33,10 @@ export default function Repayment(){
   const [savedPromptVisible, setSavedPromptVisible] = useState(false);
   const [amountError, setAmountError] = useState('');
   const [rateError, setRateError] = useState('');
-  
-  const a = Number((amount||'').replace(/\s|,|R/g, '')) || 0;
-  const r = Number((rate||'').replace(',', '.')) || 0;
+  const [exporting, setExporting] = useState(false);
+
+  const a = Number((amount || '').replace(/\s|,|R/g, '')) || 0;
+  const r = Number((rate || '').replace(',', '.')) || 0;
 
   const handleAmountChange = (value: string) => {
     setAmount(value);
@@ -86,9 +87,9 @@ export default function Repayment(){
         }
       }
 
-      const payload: any = { 
-        type: 'repayment', 
-        inputs: { principal: a, rate: r, years }, 
+      const payload: any = {
+        type: 'repayment',
+        inputs: { principal: a, rate: r, years },
         result: { pmt, total, interest },
         name
       };
@@ -96,7 +97,7 @@ export default function Repayment(){
 
       await saveCalculation(payload);
       setSavedPromptVisible(true);
-    } catch (err: any) { 
+    } catch (err: any) {
       console.error(err);
       if (err.message === 'not-signed-in') {
         router.push('/register');
@@ -109,6 +110,8 @@ export default function Repayment(){
   };
 
   const handleExport = async () => {
+    if (exporting) return;
+    setExporting(true);
     try {
       await generateAndSharePDF(
         'Bond Repayment Calculation',
@@ -121,6 +124,8 @@ export default function Repayment(){
       );
     } catch (error) {
       Alert.alert('Error', 'Failed to generate PDF');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -142,20 +147,20 @@ export default function Repayment(){
     >
       <Card>
         <YStack gap="$3">
-          <AmountField 
-            label="Bond Amount" 
-            keyboardType="numeric" 
-            value={amount} 
+          <AmountField
+            label="Bond Amount"
+            keyboardType="numeric"
+            value={amount}
             onChangeText={handleAmountChange}
             placeholder="6 000 000"
             helpText="Enter your bond/loan amount"
             presets={PRESET_AMOUNTS}
             error={amountError}
           />
-          <AmountField 
-            label="Interest Rate" 
-            keyboardType="numeric" 
-            value={rate} 
+          <AmountField
+            label="Interest Rate"
+            keyboardType="numeric"
+            value={rate}
             onChangeText={handleRateChange}
             placeholder="10.5"
             helpText="Enter the annual interest rate"
@@ -169,8 +174,8 @@ export default function Repayment(){
             <Text color="$muted" fontSize="$2">Select the loan duration in years</Text>
           </YStack>
         </YStack>
-    </Card>
-      
+      </Card>
+
       <Card title="📊 Repayment Breakdown">
         <ResultRow label="Interest Repayment" value={formatZAR(interest)} />
         <ResultRow label="Total Loan Repayment" value={formatZAR(total)} />
@@ -178,16 +183,18 @@ export default function Repayment(){
         <Text color="$muted" fontSize="$2" marginTop="$2" textAlign="center">
           📅 Over {years} years ({years * 12} months)
         </Text>
-    </Card>
-      
+      </Card>
+
       <CalculatorActions>
         <XStack gap="$3" flexWrap="wrap">
-          <Button 
-            flex={isMobile ? undefined : 1} 
+          <Button
+            flex={isMobile ? undefined : 1}
             minWidth={isMobile ? '100%' : undefined}
             onPress={handleExport}
+            disabled={exporting}
+            opacity={exporting ? 0.6 : 1}
           >
-            <BtnText>📄 Export PDF / Share</BtnText>
+            <BtnText>{exporting ? '⏳ Generating...' : '📄 Export PDF / Share'}</BtnText>
           </Button>
           <Button
             flex={isMobile ? undefined : 1}
@@ -223,9 +230,9 @@ export default function Repayment(){
         </Button>
       </CalculatorActions>
 
-      <SaveCalculationModal 
-        visible={modalVisible} 
-        onClose={() => setModalVisible(false)} 
+      <SaveCalculationModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
         onSave={handleSave}
         userRole={user?.role}
       />

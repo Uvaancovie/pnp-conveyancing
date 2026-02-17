@@ -1,9 +1,13 @@
 import { printToFileAsync } from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { Platform } from 'react-native';
 
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { formatZAR } from '../lib/money';
 import { storage } from './firebase';
+
+/* ─── re-entry guard for iOS share sheet ─── */
+let _isGeneratingPDF = false;
 
 /* ─── label helpers ─── */
 
@@ -202,13 +206,27 @@ const PDF_WIDTH = 595;
 const PDF_HEIGHT = 842;
 
 export const generateAndSharePDF = async (title: string, inputs: any, results: any) => {
+  // Prevent double-tap: if a PDF is already being generated/shared, bail out
+  if (_isGeneratingPDF) {
+    console.log('PDF generation already in progress, ignoring duplicate tap');
+    return;
+  }
+
+  _isGeneratingPDF = true;
   try {
     const html = generateHTML(title, inputs, results);
-    const { uri } = await printToFileAsync({
+
+    // On iOS, useMarkupFormatter: true bypasses the print dialog and generates a file directly
+    const printOptions: any = {
       html,
       width: PDF_WIDTH,
       height: PDF_HEIGHT,
-    });
+    };
+    if (Platform.OS === 'ios') {
+      printOptions.useMarkupFormatter = true;
+    }
+
+    const { uri } = await printToFileAsync(printOptions);
 
     if (!(await Sharing.isAvailableAsync())) {
       throw new Error('Sharing is not available on this device');
@@ -222,6 +240,8 @@ export const generateAndSharePDF = async (title: string, inputs: any, results: a
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw error;
+  } finally {
+    _isGeneratingPDF = false;
   }
 };
 
@@ -237,11 +257,18 @@ export const generateAndSavePDF = async (
 ): Promise<string> => {
   try {
     const html = generateHTML(title, inputs, results);
-    const { uri } = await printToFileAsync({
+
+    // On iOS, useMarkupFormatter: true bypasses the print dialog
+    const printOptions: any = {
       html,
       width: PDF_WIDTH,
       height: PDF_HEIGHT,
-    });
+    };
+    if (Platform.OS === 'ios') {
+      printOptions.useMarkupFormatter = true;
+    }
+
+    const { uri } = await printToFileAsync(printOptions);
 
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -259,3 +286,4 @@ export const generateAndSavePDF = async (
     throw error;
   }
 };
+
