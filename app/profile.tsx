@@ -37,7 +37,7 @@ export default function Profile(){
 
   const [confirmDeactivateVisible, setConfirmDeactivateVisible] = useState(false);
 
-  const getRoleLabel = (user: typeof user) => {
+  const getRoleLabel = (user: { role?: string; userType?: string } | null | undefined) => {
     if (!user) return 'Homeowner';
     if (user.role === 'admin') return 'Admin';
     if (user.role === 'agent') {
@@ -165,6 +165,7 @@ export default function Profile(){
                 textShadowColor: 'rgba(0,0,0,0.35)',
                 textShadowOffset: { width: 0, height: 2 },
                 textShadowRadius: 6,
+                textDecorationLine: 'none',
               }}
             >
               {user.displayName || user.email?.split('@')[0] || 'User'}
@@ -206,8 +207,8 @@ export default function Profile(){
               <Ionicons name="person" size={32} color="white" />
             </YStack>
             <YStack flex={1}>
-              <TText fontWeight="700" fontSize="$5">{user.displayName || 'User'}</TText>
-              <TText color="$muted" fontSize="$3" marginTop="$1">{user.email}</TText>
+              <TText fontWeight="700" fontSize="$5" textDecorationLine="none">{user.displayName || 'User'}</TText>
+              <TText color="$muted" fontSize="$3" marginTop="$1" textDecorationLine="none">{user.email}</TText>
               <XStack gap="$2" marginTop="$2" alignItems="center">
                 <View style={{ backgroundColor: '#0A5C3B', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
                   <TText color="white" fontSize={12} fontWeight="600">{roleLabel}</TText>
@@ -274,7 +275,7 @@ export default function Profile(){
 
             <YStack gap="$1">
               <TText color="$muted" fontSize={12}>Email</TText>
-              <TText fontSize={14} fontWeight="600">{user.email}</TText>
+              <TText fontSize="$3" fontWeight="600" textDecorationLine="none">{user.email}</TText>
             </YStack>
             <YStack gap="$1">
               <TText color="$muted" fontSize={12}>Current Role</TText>
