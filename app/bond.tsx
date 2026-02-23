@@ -18,8 +18,6 @@ import { useConfig } from '../lib/useConfig';
 import { saveCalculation } from '../utils/firebase';
 import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
-const PRESET_AMOUNTS = [1000000, 2000000, 4000000, 6000000, 10000000];
-
 export default function Bond() {
   const router = useRouter();
   const { user } = useAuth();
@@ -151,15 +149,14 @@ export default function Bond() {
           onChangeText={handleAmountChange}
           placeholder="4 000 000"
           helpText="Enter the total bond amount you're registering"
-          presets={PRESET_AMOUNTS}
           error={error}
         />
         <Text color="#9CA3AF" fontSize="$2" marginTop="$2" textAlign="center">
-          💡 Quotation values subject to change
+          Quotation values subject to change
         </Text>
       </Card>
 
-      <Card title="📊 Cost Breakdown">
+      <Card title="Cost Breakdown">
         <ResultRow label="Bond Attorney Fee" value={formatZAR(atty)} />
         <ResultRow label="Postages & Petties" value={formatZAR(d.postage ?? 0)} />
         <ResultRow label="Deeds Office Fees" value={formatZAR(deeds)} />
@@ -170,7 +167,7 @@ export default function Bond() {
       </Card>
 
       <CalculatorActions>
-        <XStack gap="$3" flexWrap="wrap">
+        <XStack gap="$3" flexWrap="wrap" marginBottom="$3">
           <Button
             flex={isMobile ? undefined : 1}
             minWidth={isMobile ? '100%' : undefined}
@@ -178,7 +175,7 @@ export default function Bond() {
             disabled={exporting}
             opacity={exporting ? 0.6 : 1}
           >
-            <BtnText>{exporting ? '⏳ Generating...' : '📄 Export PDF / Share'}</BtnText>
+            <BtnText>{exporting ? 'Generating...' : 'Export PDF / Share'}</BtnText>
           </Button>
           <Button
             flex={isMobile ? undefined : 1}
@@ -191,7 +188,7 @@ export default function Bond() {
               setModalVisible(true);
             }}
           >
-            <BtnText>💾 Save to Profile</BtnText>
+            <BtnText>Save to Profile</BtnText>
           </Button>
         </XStack>
 
@@ -200,8 +197,9 @@ export default function Bond() {
           borderColor="#9CA3AF"
           hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
           onPress={() => router.push('/profile')}
+          marginBottom="$3"
         >
-          <BtnText color="#6B7280">👤 View My Profile</BtnText>
+          <BtnText color="#6B7280">View My Profile</BtnText>
         </Button>
 
         <Button
@@ -210,7 +208,7 @@ export default function Bond() {
           hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
           onPress={() => router.push('/services')}
         >
-          <BtnText>🏢 View Other Services</BtnText>
+          <BtnText>View Other Services</BtnText>
         </Button>
       </CalculatorActions>
 
@@ -223,7 +221,7 @@ export default function Bond() {
 
       <ConfirmActionModal
         visible={savedPromptVisible}
-        title="✅ Saved"
+        title="Saved"
         message="Calculation saved successfully! Would you like to view your saved calculations?"
         confirmText="View Saved"
         cancelText="Stay Here"

@@ -141,10 +141,9 @@ export default function ServicesScreen() {
 
           {/* Bottom-only gradient so the image stays clear (same style as FAQ banner) */}
           <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.14)', 'rgba(0,0,0,0.45)']}
+            colors={['rgba(30,30,30,0)', 'rgba(30,30,30,0.14)', 'rgba(30,30,30,0.45)']}
             locations={[0, 0.55, 1]}
-            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
-            pointerEvents="none"
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, pointerEvents: 'none' }}
           />
 
           {/* PnP logo bottom-right */}
@@ -199,7 +198,7 @@ export default function ServicesScreen() {
                   style={{ width: '100%' }}
                 >
                   <XStack alignItems="center" justifyContent="space-between" gap="$3">
-                    <Text fontWeight="700" fontSize="$4" color="$color" flex={1}>
+                    <Text fontWeight="700" fontSize="$3" color="#034c21" flex={1}>
                       {item.title}
                     </Text>
                     <Ionicons
@@ -212,7 +211,7 @@ export default function ServicesScreen() {
 
                 {open ? (
                   <YStack marginTop="$3">
-                    <Paragraph color="$muted" fontSize="$3" lineHeight="$6">
+                    <Paragraph color="$muted" fontSize={10} lineHeight="$5">
                       {item.description}
                     </Paragraph>
                   </YStack>
@@ -226,10 +225,10 @@ export default function ServicesScreen() {
         <YStack marginTop="$4">
           <Card>
             <YStack gap="$3" alignItems="center" padding="$4">
-            <Text fontWeight="700" fontSize="$6" color="$brand" textAlign="center">
+            <Text fontWeight="700" fontSize="$5" color="$brand" textAlign="center">
               Ready to Get Started?
             </Text>
-            <Paragraph color="$muted" fontSize="$4" textAlign="center" lineHeight="$6">
+            <Paragraph color="$muted" fontSize="$3" textAlign="center" lineHeight="$5">
               Chat with one of our conveyancers to discuss your legal needs and how we can help you.
             </Paragraph>
             <Button

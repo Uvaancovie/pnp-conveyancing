@@ -19,8 +19,6 @@ import { useConfig } from '../lib/useConfig';
 import { saveCalculation } from '../utils/firebase';
 import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
-const PRESET_AMOUNTS = [1000000, 2000000, 3000000, 5000000, 8000000];
-
 export default function Transfer() {
   const router = useRouter();
   const { user } = useAuth();
@@ -157,15 +155,14 @@ export default function Transfer() {
           onChangeText={handlePriceChange}
           placeholder="2 000 000"
           helpText="Enter the property purchase price"
-          presets={PRESET_AMOUNTS}
           error={error}
         />
         <Text color="#9CA3AF" fontSize="$2" marginTop="$2" textAlign="center">
-          💡 Quotation values subject to change
+          Quotation values subject to change
         </Text>
       </Card>
 
-      <Card title="📊 Cost Breakdown">
+      <Card title="Cost Breakdown">
         <ResultRow label="Transfer Attorney Fees" value={formatZAR(atty)} />
         <ResultRow label="Postages & Petties" value={formatZAR(d.postage ?? 0)} />
         <ResultRow label="Deeds Office Fees" value={formatZAR(deeds)} />
@@ -186,7 +183,7 @@ export default function Transfer() {
             disabled={exporting}
             opacity={exporting ? 0.6 : 1}
           >
-            <BtnText>{exporting ? '⏳ Generating...' : '📄 Export PDF / Share'}</BtnText>
+            <BtnText>{exporting ? 'Generating...' : 'Export PDF / Share'}</BtnText>
           </Button>
           <Button
             flex={isMobile ? undefined : 1}
@@ -199,7 +196,7 @@ export default function Transfer() {
               setModalVisible(true);
             }}
           >
-            <BtnText>💾 Save to Profile</BtnText>
+            <BtnText>Save to Profile</BtnText>
           </Button>
         </XStack>
 
@@ -210,7 +207,7 @@ export default function Transfer() {
           onPress={() => router.push('/profile')}
           marginBottom="$3"
         >
-          <BtnText color="#6B7280">👤 View My Profile</BtnText>
+          <BtnText color="#6B7280">View My Profile</BtnText>
         </Button>
 
         <Button
@@ -219,7 +216,7 @@ export default function Transfer() {
           hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
           onPress={() => router.push('/services')}
         >
-          <BtnText>🏢 View Other Services</BtnText>
+          <BtnText>View Other Services</BtnText>
         </Button>
       </CalculatorActions>
 
@@ -232,7 +229,7 @@ export default function Transfer() {
 
       <ConfirmActionModal
         visible={savedPromptVisible}
-        title="✅ Saved"
+        title="Saved"
         message="Calculation saved successfully! Would you like to view your saved calculations?"
         confirmText="View Saved"
         cancelText="Stay Here"

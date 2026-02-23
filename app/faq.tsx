@@ -112,10 +112,9 @@ export default function FAQScreen() {
 
           {/* Bottom-only gradient so the books stay clear */}
           <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.14)', 'rgba(0,0,0,0.45)']}
+            colors={['rgba(30,30,30,0)', 'rgba(30,30,30,0.14)', 'rgba(30,30,30,0.45)']}
             locations={[0, 0.55, 1]}
-            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
-            pointerEvents="none"
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, pointerEvents: 'none' }}
           />
 
           <YStack paddingHorizontal={14} paddingBottom={14} gap="$2">
@@ -132,19 +131,6 @@ export default function FAQScreen() {
                 Conveyancing FAQs
               </Text>
             </YStack>
-
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: '800',
-                color: '#FFFFFF',
-                textShadowColor: 'rgba(0,0,0,0.35)',
-                textShadowOffset: { width: 0, height: 2 },
-                textShadowRadius: 6,
-              }}
-            >
-              Frequently Asked Questions
-            </Text>
 
             <Text
               style={{
@@ -178,10 +164,10 @@ export default function FAQScreen() {
         <Card>
           <XStack alignItems="center" justifyContent="space-between">
             <YStack flex={1} gap="$1">
-              <Text fontWeight="700" fontSize="$5" color="$brand">
+              <Text fontWeight="700" fontSize="$3" color="$brand">
                 Conveyancing Explained
               </Text>
-              <Paragraph color="$muted" fontSize="$3" lineHeight="$5">
+              <Paragraph color="$muted" fontSize={10} lineHeight="$5">
                 Tap a question to expand and read the answer.
               </Paragraph>
             </YStack>
@@ -205,7 +191,7 @@ export default function FAQScreen() {
                   style={{ width: '100%' }}
                 >
                   <XStack alignItems="center" justifyContent="space-between" gap="$3">
-                    <Text fontWeight="700" fontSize="$4" color="$color" flex={1}>
+                    <Text fontWeight="700" fontSize="$3" color="#034c21" flex={1}>
                       {item.question}
                     </Text>
                     <Ionicons
@@ -218,7 +204,7 @@ export default function FAQScreen() {
 
                 {open ? (
                   <YStack marginTop="$3">
-                    <Paragraph color="$muted" fontSize="$3" lineHeight="$6">
+                    <Paragraph color="$muted" fontSize={10} lineHeight="$5">
                       {item.answer}
                     </Paragraph>
                   </YStack>

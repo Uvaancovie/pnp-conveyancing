@@ -19,7 +19,9 @@ export function Field({ label, ...props }: any) {
         padding="$3" 
         backgroundColor="$bg" 
         color="$color"
-        focusStyle={{ borderColor: '$brand', borderWidth: 2 }}
+        outlineWidth={0}
+        outlineStyle="none"
+        focusStyle={{ borderColor: '$border', borderWidth: 1, outlineWidth: 0, outlineStyle: 'none' }}
         keyboardType={keyboardType}
         value={value}
         onChangeText={onChangeText}

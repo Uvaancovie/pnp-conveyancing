@@ -14,6 +14,7 @@ interface AmountFieldProps {
   error?: string;
   suffix?: string;
   maxLength?: number;
+  editable?: boolean;
 }
 
 export function AmountField({ 
@@ -26,12 +27,15 @@ export function AmountField({
   error,
   suffix = '',
   maxLength,
+  editable = true,
   ...props 
 }: AmountFieldProps) {
   const [focused, setFocused] = useState(false);
 
   const formatDisplay = (val: string) => {
     if (!val) return '';
+    // For suffix fields (like percentages), don't format
+    if (suffix) return val;
     const cleaned = val.replace(/\s|,|R/g, '');
     if (isNaN(Number(cleaned))) return val;
     // Format with spaces as thousand separator (South African standard)
@@ -60,8 +64,8 @@ export function AmountField({
       <XStack 
         alignItems="center"
         borderRadius="$2" 
-        borderWidth={focused ? 2 : 1} 
-        borderColor={error ? '#EF4444' : focused ? '$brand' : '$border'} 
+        borderWidth={1} 
+        borderColor={error ? '#EF4444' : '$border'} 
         backgroundColor="$bg"
         paddingLeft="$3"
       >
@@ -85,12 +89,17 @@ export function AmountField({
           color="$color"
           fontSize="$5"
           fontWeight="600"
+          outlineWidth={0}
+          outlineStyle="none"
+          focusStyle={{ borderWidth: 0, outlineWidth: 0, outlineStyle: 'none' }}
           value={formatDisplay(value)}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={() => editable && setFocused(true)}
+          onBlur={() => editable && setFocused(false)}
           maxLength={maxLength}
+          editable={editable}
+          focusable={editable}
           {...props}
         />
       </XStack>

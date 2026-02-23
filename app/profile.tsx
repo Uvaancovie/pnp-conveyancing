@@ -136,10 +136,9 @@ export default function Profile(){
           />
 
           <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.14)', 'rgba(0,0,0,0.45)']}
+            colors={['rgba(30,30,30,0)', 'rgba(30,30,30,0.14)', 'rgba(30,30,30,0.45)']}
             locations={[0, 0.55, 1]}
-            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
-            pointerEvents="none"
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, pointerEvents: 'none' }}
           />
 
           <YStack paddingHorizontal={14} paddingBottom={14} gap="$2">
@@ -207,7 +206,7 @@ export default function Profile(){
               <Ionicons name="person" size={32} color="white" />
             </YStack>
             <YStack flex={1}>
-              <TText fontWeight="700" fontSize="$5" textDecorationLine="none">{user.displayName || 'User'}</TText>
+              <TText fontWeight="700" fontSize="$5" color="#034c21" textDecorationLine="none">{user.displayName || 'User'}</TText>
               <TText color="$muted" fontSize="$3" marginTop="$1" textDecorationLine="none">{user.email}</TText>
               <XStack gap="$2" marginTop="$2" alignItems="center">
                 <View style={{ backgroundColor: '#0A5C3B', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
@@ -377,10 +376,10 @@ export default function Profile(){
         {/* Deactivate Account */}
         <Card title="Deactivate Account" subtitle="This will disable access to your account">
           <YStack gap="$3" marginTop="$2">
-            <TText color="$muted" fontSize={13}>
+            <TText color="$muted" fontSize={10}>
               Deactivating your account will sign you out and prevent further access. If you want to re-activate, you may need to contact support.
             </TText>
-            <Button backgroundColor="#DC3545" onPress={() => setConfirmDeactivateVisible(true)}>
+            <Button backgroundColor="#B02A37" borderColor="#B02A37" onPress={() => setConfirmDeactivateVisible(true)}>
               <XStack gap="$2" alignItems="center" justifyContent="center">
                 <Ionicons name="warning-outline" size={18} color="white" />
                 <BtnText>Deactivate Account</BtnText>
@@ -391,7 +390,8 @@ export default function Profile(){
 
         <Button 
           marginTop="$4"
-          backgroundColor="#DC3545"
+          backgroundColor="#B02A37"
+          borderColor="#B02A37"
           onPress={async () => {
             await logout().catch(() => {});
             router.replace('/');

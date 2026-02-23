@@ -664,7 +664,7 @@ export default function CalculationsScreen() {
                     <XStack justifyContent="space-between" alignItems="flex-start">
                       <YStack flex={1}>
                         {c.name ? (
-                          <TText fontWeight="700" fontSize={18} color="$color" marginBottom="$1">
+                          <TText fontWeight="700" fontSize={18} color="#034c21" marginBottom="$1">
                             {c.name}
                           </TText>
                         ) : null}

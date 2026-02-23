@@ -23,16 +23,16 @@ export default function Legal(){
         />
         
         <Card>
-          <Paragraph color="$color" lineHeight="$6" fontSize="$4">
+          <Paragraph color="$color" lineHeight="$5" fontSize={10}>
             {theme.disclaimer}
           </Paragraph>
         </Card>
         
         <Card title="Contact Information">
           <YStack gap="$2">
-            <Text color="$muted" fontSize="$3">For legal queries, please contact us:</Text>
-            <Text fontWeight="600">Pather & Pather Attorneys</Text>
-            <Text color="$color">Umhlanga, South Africa</Text>
+            <Text color="$muted" fontSize={10}>For legal queries, please contact us:</Text>
+            <Text fontWeight="700" color="#034c21">Pather & Pather Attorneys</Text>
+            <Text color="$muted" fontSize={10}>Umhlanga, South Africa</Text>
           </YStack>
         </Card>
         

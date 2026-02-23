@@ -31,7 +31,7 @@ export default function WelcomeScreen() {
         right={-accentSize * 0.25}
         bottom={-accentSize * 0.05}
         opacity={0.06}
-        pointerEvents="none"
+        style={{ pointerEvents: 'none' }}
       >
         <Image
           source={require('../assets/images/accent/accent.png')}
@@ -107,11 +107,12 @@ export default function WelcomeScreen() {
       <YStack alignItems="center" zIndex={1}>
         <Text 
           color="white" 
-          fontSize={11} 
+          fontSize={9} 
           opacity={0.75} 
           textAlign="center"
           fontFamily="Poppins_400Regular"
           letterSpacing={0.3}
+          numberOfLines={1}
         >
           Durban | Pietermaritzburg | Johannesburg | Pretoria | Cape Town
         </Text>

@@ -18,7 +18,6 @@ import { saveCalculation } from '../utils/firebase';
 import { generateAndSavePDF, generateAndSharePDF } from '../utils/pdf-generator';
 
 const YEARS = [5, 10, 20, 25, 30];
-const PRESET_AMOUNTS = [2000000, 4000000, 6000000, 8000000, 12000000];
 
 export default function Repayment() {
   const router = useRouter();
@@ -154,39 +153,39 @@ export default function Repayment() {
             onChangeText={handleAmountChange}
             placeholder="6 000 000"
             helpText="Enter your bond/loan amount"
-            presets={PRESET_AMOUNTS}
             error={amountError}
           />
           <AmountField
             label="Interest Rate"
             keyboardType="numeric"
             value={rate}
-            onChangeText={handleRateChange}
+            onChangeText={() => {}}
             placeholder="10.5"
-            helpText="Enter the annual interest rate"
+            helpText="Fixed interest rate"
             suffix="%"
             maxLength={5}
             error={rateError}
+            editable={false}
           />
           <YStack gap="$1.5">
-            <Text color="$color" fontWeight="600" fontSize="$4">Loan Term</Text>
+            <Text color="#034c21" fontWeight="700" fontSize="$4">Loan Term</Text>
             <Segmented options={YEARS} value={years} onChange={setYears} />
             <Text color="$muted" fontSize="$2">Select the loan duration in years</Text>
           </YStack>
         </YStack>
       </Card>
 
-      <Card title="📊 Repayment Breakdown">
+      <Card title="Repayment Breakdown">
         <ResultRow label="Interest Repayment" value={formatZAR(interest)} />
         <ResultRow label="Total Loan Repayment" value={formatZAR(total)} />
         <ResultRow big label="Total Monthly Cost" value={formatZAR(pmt)} />
         <Text color="$muted" fontSize="$2" marginTop="$2" textAlign="center">
-          📅 Over {years} years ({years * 12} months)
+          Over {years} years ({years * 12} months)
         </Text>
       </Card>
 
       <CalculatorActions>
-        <XStack gap="$3" flexWrap="wrap">
+        <XStack gap="$3" flexWrap="wrap" marginBottom="$3">
           <Button
             flex={isMobile ? undefined : 1}
             minWidth={isMobile ? '100%' : undefined}
@@ -194,7 +193,7 @@ export default function Repayment() {
             disabled={exporting}
             opacity={exporting ? 0.6 : 1}
           >
-            <BtnText>{exporting ? '⏳ Generating...' : '📄 Export PDF / Share'}</BtnText>
+            <BtnText>{exporting ? 'Generating...' : 'Export PDF / Share'}</BtnText>
           </Button>
           <Button
             flex={isMobile ? undefined : 1}
@@ -207,7 +206,7 @@ export default function Repayment() {
               setModalVisible(true);
             }}
           >
-            <BtnText>💾 Save to Profile</BtnText>
+            <BtnText>Save to Profile</BtnText>
           </Button>
         </XStack>
 
@@ -216,8 +215,9 @@ export default function Repayment() {
           borderColor="#9CA3AF"
           hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
           onPress={() => router.push('/profile')}
+          marginBottom="$3"
         >
-          <BtnText color="#6B7280">👤 View My Profile</BtnText>
+          <BtnText color="#6B7280">View My Profile</BtnText>
         </Button>
 
         <Button
@@ -226,7 +226,7 @@ export default function Repayment() {
           hoverStyle={{ backgroundColor: '#111', borderColor: '#111' }}
           onPress={() => router.push('/services')}
         >
-          <BtnText>🏢 View Other Services</BtnText>
+          <BtnText>View Other Services</BtnText>
         </Button>
       </CalculatorActions>
 
@@ -239,7 +239,7 @@ export default function Repayment() {
 
       <ConfirmActionModal
         visible={savedPromptVisible}
-        title="✅ Saved"
+        title="Saved"
         message="Calculation saved successfully! Would you like to view your saved calculations?"
         confirmText="View Saved"
         cancelText="Stay Here"

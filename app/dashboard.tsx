@@ -56,18 +56,19 @@ export default function Home(){
         <View style={{ marginLeft: -20, marginRight: -20, position: 'relative' }}>
           <Image
             source={require('../assets/images/dashboard-banner-logo/dashboard-banner.jpg')}
-            style={{ width: '100%', height: 340, resizeMode: 'cover' }}
+            resizeMode="cover"
+            style={{ width: '100%', height: 340 }}
           />
 
           {/* Small watermark logo bottom-right */}
-          <View pointerEvents="none" style={{ position: 'absolute', right: 16, bottom: 16 }}>
+          <View style={{ position: 'absolute', right: 16, bottom: 16, pointerEvents: 'none' }}>
             <Image
               source={require('../assets/images/dashboard-banner-logo/dashboard-logo-banner.png')}
+              resizeMode="contain"
               style={{
                 width: 72,
                 height: 36,
                 opacity: 0.9,
-                resizeMode: 'contain',
               }}
             />
           </View>
@@ -195,22 +196,22 @@ export default function Home(){
         <NavCard title="View all FAQs" subtitle="Accordion-style answers" href="/faq" icon="help-circle" />
         
         <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
-          <Text fontWeight="400" fontSize="$4" marginBottom="$2" color="#034c21">What services do you provide?</Text>
-          <Paragraph fontSize="$3" lineHeight="$5" color="$muted">
+          <Text fontWeight="700" fontSize="$3" marginBottom="$2" color="#034c21">What services do you provide?</Text>
+          <Paragraph fontSize={10} lineHeight="$5" color="$muted">
             Property conveyancing including transfers, mortgage bonds, sectional title schemes, and commercial property transactions.
           </Paragraph>
         </Card>
         
         <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
-          <Text fontWeight="400" fontSize="$4" marginBottom="$2" color="#034c21">Where are you located?</Text>
-          <Paragraph fontSize="$3" lineHeight="$5" color="$muted">
+          <Text fontWeight="700" fontSize="$3" marginBottom="$2" color="#034c21">Where are you located?</Text>
+          <Paragraph fontSize={10} lineHeight="$5" color="$muted">
             Our office is in Umhlanga, serving clients nationally across South Africa.
           </Paragraph>
         </Card>
         
         <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
-          <Text fontWeight="400" fontSize="$4" marginBottom="$2" color="#034c21">How do you ensure fast processing?</Text>
-          <Paragraph fontSize="$3" lineHeight="$5" color="$muted">
+          <Text fontWeight="700" fontSize="$3" marginBottom="$2" color="#034c21">How do you ensure fast processing?</Text>
+          <Paragraph fontSize={10} lineHeight="$5" color="$muted">
             Modern technology, daily couriers, and electronic search facilities minimize delays.
           </Paragraph>
         </Card>

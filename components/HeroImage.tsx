@@ -51,7 +51,7 @@ export function HeroImage({
         resizeMode="cover"
       />
       <LinearGradient
-        colors={[`rgba(10, 92, 59, ${overlayOpacity})`, `rgba(10, 92, 59, ${overlayOpacity + 0.2})`]}
+        colors={[`rgba(30, 30, 30, ${overlayOpacity})`, `rgba(30, 30, 30, ${overlayOpacity + 0.2})`]}
         style={{
           position: 'absolute',
           top: 0,
@@ -145,7 +145,7 @@ export function ImageCard({
         }}
         resizeMode="cover"
       />
-      {title && <Text fontFamily="$heading" fontWeight="700" fontSize="$5" zIndex={1}>{title}</Text>}
+      {title && <Text fontFamily="$heading" fontWeight="700" fontSize="$5" color="#034c21" zIndex={1}>{title}</Text>}
       {subtitle && <Text color="$muted" zIndex={1}>{subtitle}</Text>}
       {children}
     </YStack>

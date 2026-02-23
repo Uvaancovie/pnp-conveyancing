@@ -118,9 +118,8 @@ export function ImageGallery({
 
       {/* Gradient overlay */}
       <LinearGradient
-        colors={['rgba(10, 92, 59, 0.3)', 'rgba(10, 92, 59, 0.7)']}
-        style={StyleSheet.absoluteFillObject}
-        pointerEvents="none"
+        colors={['rgba(30, 30, 30, 0.3)', 'rgba(30, 30, 30, 0.7)']}
+        style={[StyleSheet.absoluteFillObject, { pointerEvents: 'none' }]}
       />
 
       {/* Text overlay */}
@@ -131,7 +130,7 @@ export function ImageGallery({
           left={0} 
           right={0} 
           padding="$4"
-          pointerEvents="none"
+          style={{ pointerEvents: 'none' }}
         >
           {title && (
             <Text 
@@ -164,7 +163,7 @@ export function ImageGallery({
           bottom="$3" 
           right="$3"
           gap="$2"
-          pointerEvents="none"
+          style={{ pointerEvents: 'none' }}
         >
           {images.map((_, index) => (
             <YStack
