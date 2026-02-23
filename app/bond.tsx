@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Platform, useWindowDimensions } from 'react-native';
 import { Text, XStack } from 'tamagui';
-import { heroImages } from '../assets/images';
 import { AmountField } from '../components/AmountField';
 import { BtnText, Button } from '../components/Button';
 import { CalculatorActions, CalculatorLayout } from '../components/CalculatorLayout';
@@ -127,7 +126,6 @@ export default function Bond() {
 
   return (
     <CalculatorLayout
-      heroImage={heroImages.bond}
       title="Bond Costs"
       subtitle="Calculate your bond registration fees"
       relatedCalculators={
@@ -151,7 +149,7 @@ export default function Bond() {
           helpText="Enter the total bond amount you're registering"
           error={error}
         />
-        <Text color="#9CA3AF" fontSize="$2" marginTop="$2" textAlign="center">
+        <Text color="#9CA3AF" fontSize="$2" marginTop="$2" textAlign="left">
           Quotation values subject to change
         </Text>
       </Card>

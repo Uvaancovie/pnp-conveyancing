@@ -2,14 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Platform, ScrollView, View } from 'react-native';
+import { Alert, Image, Platform, ScrollView, View } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
-import { galleryImages } from '../assets/images';
 import { AmountField } from '../components/AmountField';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Field } from '../components/Field';
-import { ImageGallery } from '../components/ImageGallery';
 import { QuickNavBar } from '../components/Navigation';
 import theme from '../config/theme.json';
 import { createLead } from '../utils/firebase';
@@ -69,13 +67,10 @@ export default function Start(){
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <ImageGallery 
-          images={galleryImages}
-          title="Start My Transfer"
-          subtitle="Fill in your details and we'll get in touch"
-          height={200}
-          autoPlayInterval={3500}
-          showIndicators={true}
+        <Image
+          source={require('../assets/new-images/new-transfer-image.png')}
+          resizeMode="cover"
+          style={{ width: '100%', height: 220, borderRadius: 12, marginBottom: 16 }}
         />
         
         <Card>

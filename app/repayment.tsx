@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Platform, useWindowDimensions } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
-import { heroImages } from '../assets/images';
 import { AmountField } from '../components/AmountField';
 import { BtnText, Button } from '../components/Button';
 import { CalculatorActions, CalculatorLayout } from '../components/CalculatorLayout';
@@ -130,7 +129,6 @@ export default function Repayment() {
 
   return (
     <CalculatorLayout
-      heroImage={heroImages.repayment}
       title="Repayments"
       subtitle="Calculate monthly payments & totals"
       relatedCalculators={

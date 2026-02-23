@@ -63,7 +63,7 @@ export function HeroImage({
       <YStack 
         flex={1} 
         justifyContent="center" 
-        alignItems="center" 
+        alignItems="flex-start" 
         padding="$4"
         zIndex={1}
       >
@@ -72,10 +72,7 @@ export function HeroImage({
             color="white" 
             fontSize="$8" 
             fontWeight="700" 
-            textAlign="center"
-            textShadowColor="rgba(0,0,0,0.3)"
-            textShadowOffset={{ width: 0, height: 2 }}
-            textShadowRadius={4}
+            textAlign="left"
           >
             {title}
           </H1>
@@ -84,7 +81,7 @@ export function HeroImage({
           <Text 
             color="rgba(255,255,255,0.9)" 
             fontSize="$4" 
-            textAlign="center"
+            textAlign="left"
             marginTop="$2"
           >
             {subtitle}

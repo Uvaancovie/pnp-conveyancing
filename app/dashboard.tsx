@@ -55,7 +55,7 @@ export default function Home(){
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 100 }}>
         <View style={{ marginLeft: -20, marginRight: -20, position: 'relative' }}>
           <Image
-            source={require('../assets/images/dashboard-banner-logo/dashboard-banner.jpg')}
+            source={require('../assets/new-images/dashboard-image.png')}
             resizeMode="cover"
             style={{ width: '100%', height: 340 }}
           />

@@ -4,8 +4,9 @@ import { Text, YStack } from 'tamagui';
 import { HeroImage } from './HeroImage';
 import { QuickNavBar } from './Navigation';
 
+const calculatorHeroImage = require('../assets/new-images/calculator-images.png');
+
 interface CalculatorLayoutProps {
-  heroImage: any;
   title: string;
   subtitle: string;
   children: ReactNode;
@@ -13,7 +14,6 @@ interface CalculatorLayoutProps {
 }
 
 export function CalculatorLayout({
-  heroImage,
   title,
   subtitle,
   children,
@@ -34,11 +34,11 @@ export function CalculatorLayout({
         }}
       >
         <HeroImage 
-          source={heroImage}
+          source={calculatorHeroImage}
           title={title}
           subtitle={subtitle}
           height={isMobile ? 140 : 160}
-          overlayOpacity={0}
+          overlayOpacity={0.55}
         />
         
         <YStack gap={isMobile ? "$3" : "$4"}>

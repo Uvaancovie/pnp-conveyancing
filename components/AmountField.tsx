@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Text, Input as TInput, XStack, YStack } from 'tamagui';
@@ -54,11 +53,6 @@ export function AmountField({
     <YStack gap="$2">
       <XStack alignItems="center" justifyContent="space-between">
         <Text color="$color" fontWeight="600" fontSize="$4">{label}</Text>
-        {value && (
-          <TouchableOpacity onPress={handleClear}>
-            <Ionicons name="close-circle" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
-        )}
       </XStack>
       
       <XStack 
