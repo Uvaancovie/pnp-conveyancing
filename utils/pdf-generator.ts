@@ -321,8 +321,6 @@ const generateHTML = (title: string, inputs: Record<string, any>, results: Recor
     </div>
     <div class="letterhead-info">
       <div class="firm-name">Pather &amp; Pather Attorneys</div>
-      <div class="firm-sub">Inc. Radhakrishan &amp; Naidu &bull; Conveyancing &amp; Property Law</div>
-      <div class="firm-contact">Umhlanga, South Africa &nbsp;|&nbsp; +27 84 486 0186</div>
     </div>
   </div>
 
@@ -371,6 +369,21 @@ const generateHTML = (title: string, inputs: Record<string, any>, results: Recor
 const PDF_WIDTH = 595;
 const PDF_HEIGHT = 842;
 
+/* ─── Web helper: open HTML in a new tab and trigger the browser print dialog ─── */
+const printOnWeb = (html: string) => {
+  const win = window.open('', '_blank');
+  if (!win) {
+    throw new Error('Unable to open print window. Please allow pop-ups for this site.');
+  }
+  win.document.write(html);
+  win.document.close();
+  // Give the browser a moment to render then trigger print (Save as PDF)
+  setTimeout(() => {
+    win.focus();
+    win.print();
+  }, 400);
+};
+
 export const generateAndSharePDF = async (title: string, inputs: any, results: any) => {
   // Prevent double-tap: if a PDF is already being generated/shared, bail out
   if (_isGeneratingPDF) {
@@ -382,7 +395,13 @@ export const generateAndSharePDF = async (title: string, inputs: any, results: a
   try {
     const html = generateHTML(title, inputs, results);
 
-    // On iOS, useMarkupFormatter: true bypasses the print dialog and generates a file directly
+    // Web: open in a new window and trigger the browser's print / Save-as-PDF
+    if (Platform.OS === 'web') {
+      printOnWeb(html);
+      return;
+    }
+
+    // Native: generate a file and share it
     const printOptions: any = {
       html,
       width: PDF_WIDTH,
@@ -424,23 +443,30 @@ export const generateAndSavePDF = async (
   try {
     const html = generateHTML(title, inputs, results);
 
-    // On iOS, useMarkupFormatter: true bypasses the print dialog
-    const printOptions: any = {
-      html,
-      width: PDF_WIDTH,
-      height: PDF_HEIGHT,
-    };
-    if (Platform.OS === 'ios') {
-      printOptions.useMarkupFormatter = true;
+    let blob: Blob;
+
+    if (Platform.OS === 'web') {
+      // On web, we can't use printToFileAsync – create an HTML blob instead
+      blob = new Blob([html], { type: 'text/html' });
+    } else {
+      // Native: generate a real PDF file
+      const printOptions: any = {
+        html,
+        width: PDF_WIDTH,
+        height: PDF_HEIGHT,
+      };
+      if (Platform.OS === 'ios') {
+        printOptions.useMarkupFormatter = true;
+      }
+
+      const { uri } = await printToFileAsync(printOptions);
+      const response = await fetch(uri);
+      blob = await response.blob();
     }
 
-    const { uri } = await printToFileAsync(printOptions);
-
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
     const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const filename = `${Date.now()}_${sanitizedTitle}.pdf`;
+    const ext = Platform.OS === 'web' ? 'html' : 'pdf';
+    const filename = `${Date.now()}_${sanitizedTitle}.${ext}`;
     const storageRef = ref(storage, `pdfs/${userId}/${filename}`);
 
     await uploadBytes(storageRef, blob);
