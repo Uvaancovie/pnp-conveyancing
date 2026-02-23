@@ -59,8 +59,8 @@ function friendlyLabel(key: string): string {
 function formatValue(key: string, value: any): string {
   if (typeof value === 'number') {
     const lk = key.toLowerCase();
-    if (lk.includes('rate')) return `${value}%`;
-    if (lk === 'years') return `${value} years`;
+    if (lk === 'rate' || lk === 'interestrate') return `${value}%`;
+    if (lk === 'years' || lk === 'term') return `${value} years`;
     return formatZAR(value);
   }
   return String(value ?? '');
