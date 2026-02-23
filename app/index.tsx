@@ -107,7 +107,7 @@ export default function WelcomeScreen() {
       <YStack alignItems="center" zIndex={1}>
         <Text 
           color="white" 
-          fontSize={9} 
+          fontSize={13} 
           opacity={0.75} 
           textAlign="center"
           fontFamily="Poppins_400Regular"

@@ -137,7 +137,7 @@ export function QuickNavBar() {
           style={{ alignItems: 'center', paddingVertical: 4, paddingHorizontal: 12 }}
         >
           <Ionicons name={item.icon} size={24} color="#0A5C3B" />
-          <Text fontSize={11} color="#666" marginTop="$1" fontFamily="Poppins_400Regular">{item.label}</Text>
+          <Text fontSize={13} color="#666" marginTop="$1" fontFamily="Poppins_400Regular">{item.label}</Text>
         </TouchableOpacity>
       ))}
     </XStack>

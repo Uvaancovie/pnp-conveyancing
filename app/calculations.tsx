@@ -301,7 +301,7 @@ export default function CalculationsScreen() {
           <YStack gap="$3" marginTop="$2">
             {/* Calculation Type Filter */}
             <YStack gap="$2">
-              <TText color="$muted" fontSize={12}>
+              <TText color="$muted" fontSize={14}>
                 Calculation Type
               </TText>
               <Segmented
@@ -313,7 +313,7 @@ export default function CalculationsScreen() {
 
             {/* Quick Date Presets */}
             <YStack gap="$2">
-              <TText color="$muted" fontSize={12}>
+              <TText color="$muted" fontSize={14}>
                 Quick Date Filter
               </TText>
               <XStack gap="$2" flexWrap="wrap">
@@ -329,7 +329,7 @@ export default function CalculationsScreen() {
                   }}
                 >
                   <TText
-                    fontSize={12}
+                    fontSize={14}
                     fontWeight="600"
                     color={(fromDate && toDate && !month) ? '#FFFFFF' : '#6B7280'}
                   >
@@ -348,7 +348,7 @@ export default function CalculationsScreen() {
                     borderColor: '#E5E7EB',
                   }}
                 >
-                  <TText fontSize={12} fontWeight="600" color="#6B7280">
+                  <TText fontSize={14} fontWeight="600" color="#6B7280">
                     Last 30 days
                   </TText>
                 </TouchableOpacity>
@@ -365,7 +365,7 @@ export default function CalculationsScreen() {
                   }}
                 >
                   <TText
-                    fontSize={12}
+                    fontSize={14}
                     fontWeight="600"
                     color={month ? '#FFFFFF' : '#6B7280'}
                   >
@@ -384,7 +384,7 @@ export default function CalculationsScreen() {
                     borderColor: '#E5E7EB',
                   }}
                 >
-                  <TText fontSize={12} fontWeight="600" color="#6B7280">
+                  <TText fontSize={14} fontWeight="600" color="#6B7280">
                     Last month
                   </TText>
                 </TouchableOpacity>
@@ -401,7 +401,7 @@ export default function CalculationsScreen() {
                   }}
                 >
                   <TText
-                    fontSize={12}
+                    fontSize={14}
                     fontWeight="600"
                     color={(!month && !fromDate && !toDate) ? '#FFFFFF' : '#6B7280'}
                   >
@@ -437,7 +437,7 @@ export default function CalculationsScreen() {
                       alignItems: 'center',
                     }}
                   >
-                    <TText fontSize={11} fontWeight="700" color="#FFFFFF">
+                    <TText fontSize={13} fontWeight="700" color="#FFFFFF">
                       {activeFilterCount}
                     </TText>
                   </View>
@@ -483,7 +483,7 @@ export default function CalculationsScreen() {
                 </XStack>
 
                 <YStack gap="$1">
-                  <TText color="$muted" fontSize={12}>
+                  <TText color="$muted" fontSize={14}>
                     Input Amount Range (Property Price / Bond Amount)
                   </TText>
                   <XStack gap="$2">
@@ -509,7 +509,7 @@ export default function CalculationsScreen() {
                 </YStack>
 
                 <YStack gap="$1">
-                  <TText color="$muted" fontSize={12}>
+                  <TText color="$muted" fontSize={14}>
                     Result Amount Range (Total Costs / Monthly Payment)
                   </TText>
                   <XStack gap="$2">
@@ -632,7 +632,7 @@ export default function CalculationsScreen() {
                             borderRadius: 8,
                           }}
                         >
-                          <TText fontSize={12} fontWeight="700" style={{ textTransform: 'uppercase', color: '#0A5C3B' }}>
+                          <TText fontSize={14} fontWeight="700" style={{ textTransform: 'uppercase', color: '#0A5C3B' }}>
                             {c.type}
                           </TText>
                         </View>
@@ -642,7 +642,7 @@ export default function CalculationsScreen() {
                       <YStack alignItems="flex-end" flexShrink={1} marginLeft="$2" style={{ maxWidth: '45%' }}>
                         {resultAmount !== undefined && (
                           <>
-                            <TText fontSize={10} color="$muted" fontWeight="500" numberOfLines={1}>
+                            <TText fontSize={14} color="$muted" fontWeight="500" numberOfLines={1}>
                               {c.rank === 1 ? 'Highest' : c.rank === sortedAndRanked.length ? 'Lowest' : ''}
                             </TText>
                             <TText
@@ -669,7 +669,7 @@ export default function CalculationsScreen() {
                           </TText>
                         ) : null}
                       </YStack>
-                      <TText fontSize={12} color="$muted">
+                      <TText fontSize={14} color="$muted">
                         {c.createdAt?.seconds
                           ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('en-ZA', {
                             day: 'numeric',

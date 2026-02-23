@@ -45,19 +45,19 @@ export default function FAQScreen() {
         id: 'appoints-attorney',
         question: 'Who appoints the conveyancing attorney?',
         answer:
-          'The seller usually appoints the transferring attorney.\n\nHowever, depending on the transaction, there may also be:\n• A bond registration attorney (appointed by the bank granting the home loan), and/or\n• A bond cancellation attorney (appointed by the seller’s bank to cancel an existing bond).',
+          'The seller usually appoints the transferring attorney.\n\nHowever, depending on the transaction, there may also be:\nA bond registration attorney (appointed by the bank granting the home loan), and/or\nA bond cancellation attorney (appointed by the seller\'s bank to cancel an existing bond).',
       },
       {
         id: 'transfer-time',
         question: 'How long does a property transfer take?',
         answer:
-          'On average, a transfer takes 8–12 weeks from date of sale, subject to:\n• Bond approval timelines\n• Clearance certificates (rates and levies)\n• FICA compliance\n• Signing of documents\n• Deeds Office turnaround times\n\nDelays most often arise from incomplete information or outstanding compliance items.',
+          'On average, a transfer takes 8–12 weeks from date of sale, subject to:\nBond approval timelines\nClearance certificates (rates and levies)\nFICA compliance\nSigning of documents\nDeeds Office turnaround times\n\nDelays most often arise from incomplete information or outstanding compliance items.',
       },
       {
         id: 'costs',
         question: 'What costs are involved in conveyancing?',
         answer:
-          'Common costs include:\n• Transfer duty (if applicable)\n• Conveyancing (transfer) fees\n• Deeds Office fees\n• Bond registration or cancellation costs (if applicable)\n• Rates and levy clearance figures\n\nA detailed cost estimate is usually provided upfront.',
+          'Common costs include:\nTransfer duty (if applicable)\nConveyancing (transfer) fees\nDeeds Office fees\nBond registration or cancellation costs (if applicable)\nRates and levy clearance figures\n\nA detailed cost estimate is usually provided upfront.',
       },
       {
         id: 'transfer-duty',
@@ -69,7 +69,7 @@ export default function FAQScreen() {
         id: 'documents',
         question: 'What documents will I need to provide?',
         answer:
-          'Typical requirements include:\n• Certified copy of ID or passport\n• Proof of address (not older than 3 months)\n• Proof of marital status (and ANC, if applicable)\n• Income tax number\n• FICA declarations and supporting documents\n\nAdditional documents may be required depending on the transaction.',
+          'Typical requirements include:\nCertified copy of ID or passport\nProof of address (not older than 3 months)\nProof of marital status (and ANC, if applicable)\nIncome tax number\nFICA declarations and supporting documents\n\nAdditional documents may be required depending on the transaction.',
       },
       {
         id: 'fica',
@@ -127,7 +127,7 @@ export default function FAQScreen() {
               paddingVertical={6}
               borderRadius={999}
             >
-              <Text color="#FFFFFF" fontSize={12} fontWeight="700">
+              <Text color="#FFFFFF" fontSize={14} fontWeight="700">
                 Conveyancing FAQs
               </Text>
             </YStack>
@@ -167,7 +167,7 @@ export default function FAQScreen() {
               <Text fontWeight="700" fontSize="$3" color="$brand">
                 Conveyancing Explained
               </Text>
-              <Paragraph color="$muted" fontSize={10} lineHeight="$5">
+              <Paragraph color="$muted" fontSize={14} lineHeight="$5">
                 Tap a question to expand and read the answer.
               </Paragraph>
             </YStack>
@@ -204,7 +204,7 @@ export default function FAQScreen() {
 
                 {open ? (
                   <YStack marginTop="$3">
-                    <Paragraph color="$muted" fontSize={10} lineHeight="$5">
+                    <Paragraph color="$muted" fontSize={14} lineHeight="$5">
                       {item.answer}
                     </Paragraph>
                   </YStack>

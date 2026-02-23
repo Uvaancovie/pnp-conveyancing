@@ -129,15 +129,15 @@ export default function Profile(){
           }}
         >
           <Image
-            source={require('../assets/images/profile/my-profile-banner.jpg')}
+            source={require('../assets/new-images/my-profile-image.png')}
             style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
             contentFit="cover"
             contentPosition="center"
           />
 
           <LinearGradient
-            colors={['rgba(30,30,30,0)', 'rgba(30,30,30,0.14)', 'rgba(30,30,30,0.45)']}
-            locations={[0, 0.55, 1]}
+            colors={['rgba(30,30,30,0)', 'rgba(30,30,30,0.4)', 'rgba(30,30,30,0.82)']}
+            locations={[0, 0.5, 1]}
             style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, pointerEvents: 'none' }}
           />
 
@@ -151,7 +151,7 @@ export default function Profile(){
               paddingVertical={6}
               borderRadius={999}
             >
-              <TText color="#FFFFFF" fontSize={12} fontWeight="700">
+              <TText color="#FFFFFF" fontSize={14} fontWeight="700">
                 My Profile
               </TText>
             </YStack>
@@ -210,10 +210,10 @@ export default function Profile(){
               <TText color="$muted" fontSize="$3" marginTop="$1" textDecorationLine="none">{user.email}</TText>
               <XStack gap="$2" marginTop="$2" alignItems="center">
                 <View style={{ backgroundColor: '#0A5C3B', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
-                  <TText color="white" fontSize={12} fontWeight="600">{roleLabel}</TText>
+                  <TText color="white" fontSize={14} fontWeight="600">{roleLabel}</TText>
                 </View>
                 <View style={{ backgroundColor: '#E8F5E9', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
-                  <TText color="$brand" fontSize={12} fontWeight="600">{calcs.length} saved</TText>
+                  <TText color="$brand" fontSize={14} fontWeight="600">{calcs.length} saved</TText>
                 </View>
               </XStack>
             </YStack>
@@ -273,11 +273,11 @@ export default function Profile(){
             />
 
             <YStack gap="$1">
-              <TText color="$muted" fontSize={12}>Email</TText>
+              <TText color="$muted" fontSize={14}>Email</TText>
               <TText fontSize="$3" fontWeight="600" textDecorationLine="none">{user.email}</TText>
             </YStack>
             <YStack gap="$1">
-              <TText color="$muted" fontSize={12}>Current Role</TText>
+              <TText color="$muted" fontSize={14}>Current Role</TText>
               <TText fontSize={14} fontWeight="600">{roleLabel}</TText>
             </YStack>
 
@@ -376,7 +376,7 @@ export default function Profile(){
         {/* Deactivate Account */}
         <Card title="Deactivate Account" subtitle="This will disable access to your account">
           <YStack gap="$3" marginTop="$2">
-            <TText color="$muted" fontSize={10}>
+            <TText color="$muted" fontSize={14}>
               Deactivating your account will sign you out and prevent further access. If you want to re-activate, you may need to contact support.
             </TText>
             <Button backgroundColor="#B02A37" borderColor="#B02A37" onPress={() => setConfirmDeactivateVisible(true)}>

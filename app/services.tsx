@@ -2,8 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Linking, Platform, ScrollView, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { useMemo } from 'react';
+import { Linking, Platform, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Paragraph, Text, XStack, YStack } from 'tamagui';
 import { BtnText, Button } from '../components/Button';
 import { Card } from '../components/Card';
@@ -18,7 +18,6 @@ type ServiceItem = {
 
 export default function ServicesScreen() {
   const router = useRouter();
-  const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
   const { width: windowWidth } = useWindowDimensions();
 
   const openWhatsApp = () => {
@@ -164,7 +163,7 @@ export default function ServicesScreen() {
               paddingVertical={6}
               borderRadius={999}
             >
-              <Text color="#FFFFFF" fontSize={12} fontWeight="700">
+              <Text color="#FFFFFF" fontSize={14} fontWeight="700">
                 Our Services
               </Text>
             </YStack>
@@ -189,36 +188,13 @@ export default function ServicesScreen() {
         </View>
 
         <YStack gap="$3">
-          {services.map((item) => {
-            const open = !!openIds[item.id];
-            return (
-              <Card key={item.id}>
-                <TouchableOpacity
-                  onPress={() => setOpenIds((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}
-                  style={{ width: '100%' }}
-                >
-                  <XStack alignItems="center" justifyContent="space-between" gap="$3">
-                    <Text fontWeight="700" fontSize="$3" color="#034c21" flex={1}>
-                      {item.title}
-                    </Text>
-                    <Ionicons
-                      name={open ? 'chevron-up' : 'chevron-down'}
-                      size={20}
-                      color="#0A5C3B"
-                    />
-                  </XStack>
-                </TouchableOpacity>
-
-                {open ? (
-                  <YStack marginTop="$3">
-                    <Paragraph color="$muted" fontSize={10} lineHeight="$5">
-                      {item.description}
-                    </Paragraph>
-                  </YStack>
-                ) : null}
-              </Card>
-            );
-          })}
+          {services.map((item) => (
+            <Card key={item.id}>
+              <Text fontWeight="700" fontSize="$3" color="#034c21">
+                {item.title}
+              </Text>
+            </Card>
+          ))}
         </YStack>
 
         {/* Call to Action at the end */}

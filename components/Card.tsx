@@ -40,7 +40,7 @@ export function Card({ title, subtitle, children, backgroundImage, imageOpacity 
         />
       )}
       {title ? <Text fontFamily="$heading" fontWeight="700" fontSize="$3" color="#034c21" zIndex={1}>{title}</Text> : null}
-      {subtitle ? <Text color="$muted" fontSize={10} zIndex={1}>{subtitle}</Text> : null}
+      {subtitle ? <Text color="$muted" fontSize={14} zIndex={1}>{subtitle}</Text> : null}
       {children}
     </YStack>
   );

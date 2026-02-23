@@ -77,7 +77,7 @@ export default function Home(){
       {/* Welcome Header */}
       {user && (
         <YStack marginTop="$4" marginBottom="$4" paddingTop="$2">
-        <Text fontSize={28} fontWeight="400" color="#034c21">
+        <Text fontSize={30} fontWeight="400" color="#034c21">
           Welcome, {user.displayName || user.email?.split('@')[0] || 'User'}!
         </Text>
         </YStack>
@@ -197,21 +197,21 @@ export default function Home(){
         
         <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
           <Text fontWeight="700" fontSize="$3" marginBottom="$2" color="#034c21">What services do you provide?</Text>
-          <Paragraph fontSize={10} lineHeight="$5" color="$muted">
+          <Paragraph fontSize={14} lineHeight="$5" color="$muted">
             Property conveyancing including transfers, mortgage bonds, sectional title schemes, and commercial property transactions.
           </Paragraph>
         </Card>
         
         <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
           <Text fontWeight="700" fontSize="$3" marginBottom="$2" color="#034c21">Where are you located?</Text>
-          <Paragraph fontSize={10} lineHeight="$5" color="$muted">
+          <Paragraph fontSize={14} lineHeight="$5" color="$muted">
             Our office is in Umhlanga, serving clients nationally across South Africa.
           </Paragraph>
         </Card>
         
         <Card backgroundColor="$card" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$border">
           <Text fontWeight="700" fontSize="$3" marginBottom="$2" color="#034c21">How do you ensure fast processing?</Text>
-          <Paragraph fontSize={10} lineHeight="$5" color="$muted">
+          <Paragraph fontSize={14} lineHeight="$5" color="$muted">
             Modern technology, daily couriers, and electronic search facilities minimize delays.
           </Paragraph>
         </Card>
