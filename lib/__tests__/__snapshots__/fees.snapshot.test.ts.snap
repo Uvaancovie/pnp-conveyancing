@@ -1,0 +1,447 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bond Fee Calculation - Snapshots R1,000,000 bond calculation snapshot 1`] = `
+{
+  "config": {
+    "fixedBandsUsed": [
+      {
+        "feeExVat": 45870,
+        "max": 3000000,
+      },
+      {
+        "feeExVat": 56121.74,
+        "max": 4000000,
+      },
+    ],
+    "tiersUsed": [
+      {
+        "max": 2000000,
+        "rate": 0.009,
+      },
+      {
+        "rate": 0.008,
+      },
+    ],
+    "vatRate": 0.15,
+  },
+  "input": {
+    "bondAmount": 1000000,
+  },
+  "output": {
+    "attorneyFeeExVat": 45870,
+    "attorneyFeeIncVat": 52750,
+    "deedsOfficeFee": 1646,
+    "disbursements": {
+      "deedsSearch": 345,
+      "electronicGen": 575,
+      "electronicInstr": 115,
+      "postage": 1610,
+    },
+    "total": 57041,
+  },
+}
+`;
+
+exports[`Bond Fee Calculation - Snapshots R2,000,000 bond calculation snapshot 1`] = `
+{
+  "config": {
+    "fixedBandsUsed": [
+      {
+        "feeExVat": 45870,
+        "max": 3000000,
+      },
+      {
+        "feeExVat": 56121.74,
+        "max": 4000000,
+      },
+    ],
+    "tiersUsed": [
+      {
+        "max": 2000000,
+        "rate": 0.009,
+      },
+      {
+        "rate": 0.008,
+      },
+    ],
+    "vatRate": 0.15,
+  },
+  "input": {
+    "bondAmount": 2000000,
+  },
+  "output": {
+    "attorneyFeeExVat": 45870,
+    "attorneyFeeIncVat": 52750,
+    "deedsOfficeFee": 1646,
+    "disbursements": {
+      "deedsSearch": 345,
+      "electronicGen": 575,
+      "electronicInstr": 115,
+      "postage": 1610,
+    },
+    "total": 57041,
+  },
+}
+`;
+
+exports[`Bond Fee Calculation - Snapshots R4,000,000 bond calculation snapshot 1`] = `
+{
+  "config": {
+    "fixedBandsUsed": [
+      {
+        "feeExVat": 45870,
+        "max": 3000000,
+      },
+      {
+        "feeExVat": 56121.74,
+        "max": 4000000,
+      },
+    ],
+    "tiersUsed": [
+      {
+        "max": 2000000,
+        "rate": 0.009,
+      },
+      {
+        "rate": 0.008,
+      },
+    ],
+    "vatRate": 0.15,
+  },
+  "input": {
+    "bondAmount": 4000000,
+  },
+  "output": {
+    "attorneyFeeExVat": 56121.74,
+    "attorneyFeeIncVat": 64540,
+    "deedsOfficeFee": 2281,
+    "disbursements": {
+      "deedsSearch": 345,
+      "electronicGen": 575,
+      "electronicInstr": 115,
+      "postage": 1610,
+    },
+    "total": 69466,
+  },
+}
+`;
+
+exports[`Bond Fee Calculation - Snapshots R10,000,000 bond calculation snapshot 1`] = `
+{
+  "config": {
+    "fixedBandsUsed": [
+      {
+        "feeExVat": 45870,
+        "max": 3000000,
+      },
+      {
+        "feeExVat": 56121.74,
+        "max": 4000000,
+      },
+    ],
+    "tiersUsed": [
+      {
+        "max": 2000000,
+        "rate": 0.009,
+      },
+      {
+        "rate": 0.008,
+      },
+    ],
+    "vatRate": 0.15,
+  },
+  "input": {
+    "bondAmount": 10000000,
+  },
+  "output": {
+    "attorneyFeeExVat": 80000,
+    "attorneyFeeIncVat": 92000,
+    "deedsOfficeFee": 2800,
+    "disbursements": {
+      "deedsSearch": 345,
+      "electronicGen": 575,
+      "electronicInstr": 115,
+      "postage": 1610,
+    },
+    "total": 97445,
+  },
+}
+`;
+
+exports[`Bond Fee Calculation - Snapshots multiple bond amounts snapshot 1`] = `
+[
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 500000,
+    },
+    "output": {
+      "attorneyFeeExVat": 45870,
+      "attorneyFeeIncVat": 52750,
+      "deedsOfficeFee": 1646,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 57041,
+    },
+  },
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 1000000,
+    },
+    "output": {
+      "attorneyFeeExVat": 45870,
+      "attorneyFeeIncVat": 52750,
+      "deedsOfficeFee": 1646,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 57041,
+    },
+  },
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 1500000,
+    },
+    "output": {
+      "attorneyFeeExVat": 45870,
+      "attorneyFeeIncVat": 52750,
+      "deedsOfficeFee": 1646,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 57041,
+    },
+  },
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 2000000,
+    },
+    "output": {
+      "attorneyFeeExVat": 45870,
+      "attorneyFeeIncVat": 52750,
+      "deedsOfficeFee": 1646,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 57041,
+    },
+  },
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 3000000,
+    },
+    "output": {
+      "attorneyFeeExVat": 45870,
+      "attorneyFeeIncVat": 52750,
+      "deedsOfficeFee": 2281,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 57676,
+    },
+  },
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 4000000,
+    },
+    "output": {
+      "attorneyFeeExVat": 56121.74,
+      "attorneyFeeIncVat": 64540,
+      "deedsOfficeFee": 2281,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 69466,
+    },
+  },
+  {
+    "config": {
+      "fixedBandsUsed": [
+        {
+          "feeExVat": 45870,
+          "max": 3000000,
+        },
+        {
+          "feeExVat": 56121.74,
+          "max": 4000000,
+        },
+      ],
+      "tiersUsed": [
+        {
+          "max": 2000000,
+          "rate": 0.009,
+        },
+        {
+          "rate": 0.008,
+        },
+      ],
+      "vatRate": 0.15,
+    },
+    "input": {
+      "bondAmount": 5000000,
+    },
+    "output": {
+      "attorneyFeeExVat": 40000,
+      "attorneyFeeIncVat": 46000,
+      "deedsOfficeFee": 2800,
+      "disbursements": {
+        "deedsSearch": 345,
+        "electronicGen": 575,
+        "electronicInstr": 115,
+        "postage": 1610,
+      },
+      "total": 51445,
+    },
+  },
+]
+`;

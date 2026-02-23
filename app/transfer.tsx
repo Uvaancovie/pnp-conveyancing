@@ -178,7 +178,7 @@ export default function Transfer() {
       </Card>
 
       <CalculatorActions>
-        <XStack gap="$3" flexWrap="wrap">
+        <XStack gap="$3" flexWrap="wrap" marginBottom="$3">
           <Button
             flex={isMobile ? undefined : 1}
             minWidth={isMobile ? '100%' : undefined}
@@ -208,6 +208,7 @@ export default function Transfer() {
           borderColor="#9CA3AF"
           hoverStyle={{ backgroundColor: '#F3F4F6', borderColor: '#9CA3AF' }}
           onPress={() => router.push('/profile')}
+          marginBottom="$3"
         >
           <BtnText color="#6B7280">👤 View My Profile</BtnText>
         </Button>

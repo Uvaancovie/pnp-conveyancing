@@ -1,0 +1,99 @@
+{
+  "bondFeeCalculations": [
+    {
+      "description": "Bond @ R500,000",
+      "bondAmount": 500000,
+      "expectedFeeExVat": 4500,
+      "expectedFeeIncVat": 5175,
+      "expectedDeedsOfficeFee": 1646,
+      "tier": "first_tier"
+    },
+    {
+      "description": "Bond @ R1,000,000",
+      "bondAmount": 1000000,
+      "expectedFeeExVat": 9000,
+      "expectedFeeIncVat": 10350,
+      "expectedDeedsOfficeFee": 1646,
+      "tier": "first_tier"
+    },
+    {
+      "description": "Bond @ R2,000,000 (tier boundary)",
+      "bondAmount": 2000000,
+      "expectedFeeExVat": 18000,
+      "expectedFeeIncVat": 20700,
+      "expectedDeedsOfficeFee": 1646,
+      "tier": "first_tier"
+    },
+    {
+      "description": "Bond @ R3,000,000 (fixed band)",
+      "bondAmount": 3000000,
+      "expectedFeeExVat": 45870,
+      "expectedFeeIncVat": 52750.5,
+      "expectedDeedsOfficeFee": 2281,
+      "tier": "fixed_band"
+    },
+    {
+      "description": "Bond @ R4,000,000 (fixed band)",
+      "bondAmount": 4000000,
+      "expectedFeeExVat": 56121.74,
+      "expectedFeeIncVat": 64540,
+      "expectedDeedsOfficeFee": 2281,
+      "tier": "fixed_band"
+    },
+    {
+      "description": "Bond @ R5,000,000 (second tier)",
+      "bondAmount": 5000000,
+      "expectedFeeExVat": 40000,
+      "expectedFeeIncVat": 46000,
+      "expectedDeedsOfficeFee": 2800,
+      "tier": "second_tier"
+    },
+    {
+      "description": "Bond @ R10,000,000",
+      "bondAmount": 10000000,
+      "expectedFeeExVat": 80000,
+      "expectedFeeIncVat": 92000,
+      "expectedDeedsOfficeFee": 2800,
+      "tier": "second_tier"
+    }
+  ],
+  "edgeCases": [
+    {
+      "description": "Zero bond amount",
+      "bondAmount": 0,
+      "expectedFeeExVat": 0,
+      "expectedFeeIncVat": 0,
+      "expectedDeedsOfficeFee": 1646
+    },
+    {
+      "description": "Negative bond amount (invalid)",
+      "bondAmount": -100000,
+      "expectedFeeExVat": 0,
+      "expectedFeeIncVat": 0,
+      "shouldThrow": false,
+      "note": "Should handle gracefully, return 0"
+    },
+    {
+      "description": "Very large bond amount",
+      "bondAmount": 100000000,
+      "expectedFeeExVat": 800000,
+      "expectedFeeIncVat": 920000,
+      "expectedDeedsOfficeFee": 2800
+    },
+    {
+      "description": "Decimal bond amount",
+      "bondAmount": 1234567.89,
+      "expectedFeeExVat": 9876.54,
+      "expectedFeeIncVat": 11358.02,
+      "tier": "first_tier",
+      "note": "Should handle decimals correctly"
+    }
+  ],
+  "disbursements": {
+    "postage": 1610,
+    "electronicGen": 575,
+    "electronicInstr": 115,
+    "deedsSearch": 345
+  },
+  "vatRate": 0.15
+}
