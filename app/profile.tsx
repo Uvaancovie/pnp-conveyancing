@@ -206,8 +206,8 @@ export default function Profile(){
               <Ionicons name="person" size={32} color="white" />
             </YStack>
             <YStack flex={1}>
-              <TText fontWeight="700" fontSize="$5" color="#034c21" textDecorationLine="none">{user.displayName || 'User'}</TText>
-              <TText color="$muted" fontSize="$3" marginTop="$1" textDecorationLine="none">{user.email}</TText>
+              <TText fontWeight="700" fontSize="$4" color="#034c21" textDecorationLine="none" style={{ textDecorationLine: 'none' }}>{user.displayName || 'User'}</TText>
+              <TText color="$muted" fontSize="$2" marginTop="$1" textDecorationLine="none" style={{ textDecorationLine: 'none' }}>{user.email}</TText>
               <XStack gap="$2" marginTop="$2" alignItems="center">
                 <View style={{ backgroundColor: '#0A5C3B', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
                   <TText color="white" fontSize={14} fontWeight="600">{roleLabel}</TText>

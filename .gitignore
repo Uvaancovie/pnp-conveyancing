@@ -47,3 +47,62 @@ yarn-error.*
 # IDE
 .vscode
 .idea
+
+# Firecrawl agent output
+.firecrawl/
+
+# Android build outputs
+android/app/build/
+android/\.gradle/
+android/\.idea/
+
+# iOS build outputs
+ios/Pods/
+ios/build/
+
+# Local AI agent and tool directories
+.adal/
+.agent/
+.agents/
+.augment/
+.claude/
+.cline/
+.codebuddy/
+.commandcode/
+.continue/
+.cortex/
+.crush/
+.factory/
+.goose/
+.iflow/
+.junie/
+.kilocode/
+.kiro/
+.kode/
+.mcpjam/
+.mux/
+.neovate/
+.openhands/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.roo/
+.trae/
+.vibe/
+.windsurf/
+.zencoder/
+
+# Skills metadata
+skills-lock.json
+skills/
+
+# Playwright artifacts
+.playwright-mcp/
+*.png
+
+        .playwright-mcp/
+        .bond-after.png
+        .bond-before.png
+        .index-after.png
+        .index-before.png

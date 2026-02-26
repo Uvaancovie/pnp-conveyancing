@@ -107,12 +107,12 @@ export default function WelcomeScreen() {
       <YStack alignItems="center" zIndex={1}>
         <Text 
           color="white" 
-          fontSize={13} 
+          fontSize={12} 
           opacity={0.75} 
           textAlign="center"
           fontFamily="Poppins_400Regular"
           letterSpacing={0.3}
-          numberOfLines={1}
+          flexWrap="wrap"
         >
           Durban | Pietermaritzburg | Johannesburg | Pretoria | Cape Town
         </Text>

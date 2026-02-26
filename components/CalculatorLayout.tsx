@@ -37,7 +37,7 @@ export function CalculatorLayout({
           source={calculatorHeroImage}
           title={title}
           subtitle={subtitle}
-          height={isMobile ? 140 : 160}
+          height={isMobile ? 200 : 220}
           overlayOpacity={0.55}
         />
         
